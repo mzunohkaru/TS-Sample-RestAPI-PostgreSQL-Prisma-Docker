@@ -1,0 +1,36 @@
+{
+  "name": "ts-psgl-prisma",
+  "version": "1.0.0",
+  "description": "`pnpm init`",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon src/index.ts",
+    "db:init": "prisma init",
+    "db:migrate": "npx prisma migrate dev --name <migration-name>",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "studio": "prisma studio",
+    "watch": "npx tsc --watch",
+    "seed": "ts-node prisma/seed.ts",
+    "express": "nodemon src/express/index.ts",
+    "hono": "ts-node src/hono/index.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "^5.13.0",
+    "bcrypt": "^5.1.1",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.12.11",
+    "nodemon": "^3.1.0",
+    "prisma": "^5.13.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5"
+  }
+}
