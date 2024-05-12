@@ -9,11 +9,11 @@ export const createUser = async (
   next: NextFunction
 ) => {
   const { name, email, password } = req.body;
-  const hashedPassword = await hashPassword(password);
+  const hashedPassword = await hashPassword(password.trim());
   const user = await prisma.user.create({
     data: {
       name: name,
-      email: email,
+      email: email.trim().toLowerCase(),
       password: hashedPassword,
     },
   });
@@ -27,11 +27,11 @@ export const loginUser = async (
 ) => {
   const { email, password } = req.body;
   const user = await prisma.user.findFirst({
-    where: { email: email },
+    where: { email: email.trim().toLowerCase() },
   });
 
   const isPasswordCorrect = await comparePassword(
-    password,
+    password.trim(),
     user?.password ?? ""
   );
   if (!isPasswordCorrect) {
@@ -55,13 +55,13 @@ export const upsertUser = async (
     return;
   }
 
-  const hashedPassword = await hashPassword(password);
+  const hashedPassword = await hashPassword(password.trim());
   try {
     const user = await prisma.$transaction(async (prisma) => {
       return await prisma.user.upsert({
         where: { id: Number(id) },
-        update: { name: name, email: email, password: hashedPassword },
-        create: { name: name, email: email, password: hashedPassword },
+        update: { name: name, email: email.trim().toLowerCase(), password: hashedPassword },
+        create: { name: name, email: email.trim().toLowerCase(), password: hashedPassword },
       });
     });
 
