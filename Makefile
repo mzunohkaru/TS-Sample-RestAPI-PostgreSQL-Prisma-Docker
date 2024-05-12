@@ -3,6 +3,12 @@ up:
 	@docker-compose -f docker-compose.local.yaml up
 	@echo "Dockerコンテナが起動しました。"
 
+ps:
+	docker-compose -f docker-compose.local.yaml ps
+
+bash:
+	docker-compose -f docker-compose.local.yaml exec postgres bash
+
 # psgl:
 # 	docker-compose exec postgres psql -U myuser -d mydb
 psgl:

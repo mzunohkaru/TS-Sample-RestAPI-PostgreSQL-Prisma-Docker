@@ -13,7 +13,13 @@ TypeScriptとPostgreSQLを使用したプロジェクトで、Dockerコンテナ
 1. 依存関係をインストール: `npm install --save-dev typescript ts-node @types/node prisma`
 2. Prismaを初期化: `npx prisma init`
 3. Dockerコンテナを起動: `make up`
-4. データベースマイグレーションを適用: `npx prisma migrate dev --name init`
+4. データベースマイグレーションを適用: `npx prisma migrate dev --name <migration_name>`
+5. Prismaが生成した、migration.sqlファイルに追加で記述
+   ※Check制約
+   ※CreateView SQLスクリプト
+6. データベースに変更を反映する
+   ※`npx prisma migrate deploy`
+   ※`npx prisma migrate dev --create-only`
 
 ## 開発
 
@@ -47,23 +53,10 @@ mydb=# `\d "User";`
 mydb=# \d User;
 Did not find any relation named "User".
 
-### PrismaのスキーマからCheck制約は設定できない
-$ npx prisma migrate dev --name add_active_to_user
-Environment variables loaded from .env
-Prisma schema loaded from prisma/schema.prisma
-Error: Prisma schema validation - (get-config wasm)
-Error code: P1012
-error: Native type Check is not supported for postgresql connector.
-  -->  schema.prisma:23
-   | 
-22 |   updatedAt DateTime @updatedAt
-23 |   active    Int      @default(0) @db.Check("active IN (0, 99)")
-   | 
-
-Validation Error Count: 1
-[Context: getConfig]
-
-Prisma CLI Version : 5.13.0
+### Check制約
+ALTER TABLE "users"
+ADD CONSTRAINT "password_min_length"
+CHECK (LENGTH("password") >= 6);
 
 ### プロダクション環境に適用
 `npx prisma migrate deploy`

@@ -7,8 +7,10 @@
     "dev": "nodemon src/index.ts",
     "db:init": "prisma init",
     "db:migrate": "npx prisma migrate dev --name <migration-name>",
-    "db:generate": "prisma generate",
-    "db:push": "prisma db push",
+    "db:generate": "npx prisma generate",
+    "db:deploy": "npx prisma migrate deploy",
+    "db:create-view": "npx prisma migrate dev --create-only",
+    "db:pull": "npx prisma db pull",
     "studio": "prisma studio",
     "watch": "npx tsc --watch",
     "seed": "ts-node prisma/seed.ts",
@@ -22,7 +24,8 @@
     "@prisma/client": "^5.13.0",
     "bcrypt": "^5.1.1",
     "dotenv": "^16.4.5",
-    "express": "^4.19.2"
+    "express": "^4.19.2",
+    "express-validator": "^7.0.1"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
