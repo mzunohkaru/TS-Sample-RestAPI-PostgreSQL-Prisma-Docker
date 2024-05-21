@@ -7,14 +7,18 @@ export const getUsers = async (
   res: Response,
   next: NextFunction
 ) => {
-  const user = await prisma.user.findMany({
-    select: {
-      id: true,
-      name: true,
-      posts: true,
-    },
-  });
-  res.status(200).json(user);
+  try {
+    const user = await prisma.user.findFirst({
+      select: {
+        id: true,
+        name: true,
+        posts: true,
+      },
+    });
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
 };
 
 export const getUserById = async (

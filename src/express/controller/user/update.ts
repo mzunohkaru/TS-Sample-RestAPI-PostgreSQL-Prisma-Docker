@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
+import prisma from "../../../express/utils/constants";
 
-import prisma from "../../utils/constants";
+import { updateUserSchema } from "../../../schema/user";
 
 export const updateUser = async (
   req: Request,
@@ -8,15 +9,17 @@ export const updateUser = async (
   next: NextFunction
 ) => {
   const { id } = req.params;
-  const { name, email } = req.body;
+  const validationResult = updateUserSchema.safeParse(req.body);
+
+  if (!validationResult.success) {
+    return res.status(400).json({ errors: validationResult.error.flatten() });
+  }
+
+  const { name, email } = validationResult.data;
   const updateData: { name?: string; email?: string } = {};
 
-  if (name) {
-    updateData.name = name;
-  }
-  if (email) {
-    updateData.email = email.trim().toLowerCase();
-  }
+  if (name) updateData.name = name;
+  if (email) updateData.email = email.trim().toLowerCase();
 
   try {
     const user = await prisma.user.update({

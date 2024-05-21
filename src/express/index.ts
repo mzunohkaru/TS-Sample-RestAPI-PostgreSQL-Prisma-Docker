@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Express, Request, Response } from "express";
 import * as dotenv from "dotenv";
 
 import userRouter from "./router/user";
@@ -7,7 +7,7 @@ import errorHandler from "./middleware/error";
 
 dotenv.config();
 
-const app = express();
+const app: Express = express();
 const port = process.env.PORT || 3000;
 
 app.use(express.json());
@@ -18,7 +18,7 @@ app.use("/post", postRouter);
 // エラーハンドリングミドルウェアを追加
 app.use(errorHandler);
 
-app.get("/", (req, res) => {
+app.get("/", (req: Request, res: Response) => {
   res.send("Running API 👩‍💻");
 });
 
