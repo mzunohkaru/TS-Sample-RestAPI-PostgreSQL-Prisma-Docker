@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import prisma from "../../../express/utils/constants";
+import prisma from "../../../utils/constants";
 
 import { updateUserSchema } from "../../../schema/user";
 

@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 
-import prisma from "../../utils/constants";
-import { hashPassword, comparePassword } from "../../middleware/hash";
+import prisma from "../../../utils/constants";
+import { hashPassword, comparePassword } from "../../../utils/hash";
 
 export const createUser = async (
   req: Request,

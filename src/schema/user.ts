@@ -1,10 +1,25 @@
 import { z } from "zod";
 
-const updateUserSchema = z.object({
+const CreateUserSchema = z.object({
+  name: z.string().min(1).max(10),
+  email: z.string().email(),
+  password: z.string().min(4).max(20),
+});
+
+type CreateUserSchema = z.infer<typeof CreateUserSchema>;
+
+const UpdateUserSchema = z.object({
   name: z.string().min(1).max(10),
   email: z.string().email(),
 });
 
-type updateUserSchema = z.infer<typeof updateUserSchema>;
+type UpdateUserSchema = z.infer<typeof UpdateUserSchema>;
 
-export { updateUserSchema };
+const LoginUserSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(4).max(20),
+});
+
+type LoginUserSchema = z.infer<typeof LoginUserSchema>;
+
+export { CreateUserSchema, UpdateUserSchema, LoginUserSchema };

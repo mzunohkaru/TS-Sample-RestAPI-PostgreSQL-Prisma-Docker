@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 
-import prisma from "../../utils/constants";
+import prisma from "../../../utils/constants";
 
 export const getUsers = async (
   req: Request,

@@ -4,8 +4,8 @@
   "description": "`pnpm init`",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon src/index.ts",
-    "start": "nodemon --legacy-watch src/express/index.ts",
+    "start:express": "nodemon --legacy-watch src/express/index.ts",
+    "start:hono": "nodemon --legacy-watch src/hono/index.ts",
     "db:init": "prisma init",
     "db:migrate": "npx prisma migrate dev --name <migration-name>",
     "db:generate": "npx prisma generate",
@@ -14,14 +14,14 @@
     "db:pull": "npx prisma db pull",
     "studio": "prisma studio",
     "watch": "npx tsc --watch",
-    "seed": "ts-node prisma/seed.ts",
-    "express": "nodemon src/express/index.ts",
-    "hono": "nodemon src/hono/index.ts"
+    "seed": "ts-node prisma/seed.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@hono/node-server": "^1.11.1",
+    "@hono/zod-validator": "^0.2.1",
     "@prisma/client": "^5.14.0",
     "bcrypt": "^5.1.1",
     "dotenv": "^16.4.5",
