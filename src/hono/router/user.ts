@@ -6,8 +6,24 @@ import { createUser, loginUser } from "../controller/user/create";
 import { getUsers, getUserById } from "../controller/user/read";
 
 const userRouter = new Hono()
-  .post("/register", zValidator("json", CreateUserSchema), createUser)
-  .post("/login", zValidator("json", LoginUserSchema), loginUser)
+  .post(
+    "/register",
+    zValidator("json", CreateUserSchema, (result, c) => {
+      if (!result.success) {
+        return c.json({ message: result.error }, 400);
+      }
+    }),
+    createUser
+  )
+  .post(
+    "/login",
+    zValidator("json", LoginUserSchema, (result, c) => {
+      if (!result.success) {
+        return c.json({ message: result.error }, 400);
+      }
+    }),
+    loginUser
+  )
   .get("/", getUsers)
   .get("/:id", getUserById);
 

@@ -1,5 +1,6 @@
 import { Context } from "hono";
-import prisma from "../../../utils/constants";
+
+import prisma from "../../../utils/db";
 
 export const getUsers = async (c: Context) => {
   try {

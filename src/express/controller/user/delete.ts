@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 
-
-import prisma from "../../../utils/constants";
+import prisma from "../../../utils/db";
 
 export const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
   const { id } = req.params;
