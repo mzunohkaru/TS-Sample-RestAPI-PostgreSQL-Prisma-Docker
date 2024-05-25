@@ -6,6 +6,7 @@ import { prettyJSON } from "hono/pretty-json";
 
 import userRouter from "./router/user";
 import postRouter from "./router/post";
+import fetchRouter from "./router/fetch";
 
 const app = new Hono().basePath("/api");
 
@@ -25,7 +26,7 @@ serve({
 
 console.log(`Server is running at http://localhost:${PORT}/api`);
 
-app.route("/user", userRouter).route("/post", postRouter);
+app.route("/user", userRouter).route("/post", postRouter).route("/fetch", fetchRouter);
 
 export default app;
 export type AppType = typeof app;
