@@ -1,5 +1,6 @@
 import { Context } from "hono";
 
+import { handlePrismaError } from "../../../utils/error";
 import prisma from "../../../utils/db";
 
 export const getUsers = async (c: Context) => {
@@ -13,17 +14,21 @@ export const getUsers = async (c: Context) => {
     });
     return c.json(users, 200);
   } catch (error) {
-    return c.json({ message: "Internal server error" }, 500);
+    return handlePrismaError(error, c);
   }
 };
 
 export const getUserById = async (c: Context) => {
-  const id = c.req.param("id");
-  const user = await prisma.user.findFirst({
-    where: { id: Number(id) },
-    include: {
-      posts: true,
-    },
-  });
-  return c.json(user, 200);
+  try {
+    const id = c.req.param("id");
+    const user = await prisma.user.findFirst({
+      where: { id: Number(id) },
+      include: {
+        posts: true,
+      },
+    });
+    return c.json(user, 200);
+  } catch (error) {
+    return handlePrismaError(error, c);
+  }
 };

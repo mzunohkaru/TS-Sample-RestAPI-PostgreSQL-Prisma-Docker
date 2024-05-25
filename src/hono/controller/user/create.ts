@@ -2,6 +2,7 @@ import { Context } from "hono";
 
 import { CreateUserSchema, LoginUserSchema } from "../../../schema/user";
 import { hashPassword, comparePassword } from "../../../utils/hash";
+import { handlePrismaError } from "../../../utils/error";
 import prisma from "../../../utils/db";
 
 export const createUser = async (c: Context) => {
@@ -16,16 +17,19 @@ export const createUser = async (c: Context) => {
     });
     return c.json(user, 200);
   } catch (error) {
-    return c.json({ message: "Internal server error" }, 500);
+    return handlePrismaError(error, c);
   }
 };
 
 export const loginUser = async (c: Context) => {
-  const { email, password } = await c.req.json<LoginUserSchema>();
-  const user = await prisma.user.findUnique({ where: { email } });
-  if (!user) return c.json({ message: "User not found" }, 404);
-  const isPasswordCorrect = await comparePassword(password, user.password);
-  if (!isPasswordCorrect) return c.json({ message: "Invalid password" }, 401);
-
-  return c.json({ message: "Login successful" }, 200);
+  try {
+    const { email, password } = await c.req.json<LoginUserSchema>();
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) return c.json({ message: "User not found" }, 404);
+    const isPasswordCorrect = await comparePassword(password, user.password);
+    if (!isPasswordCorrect) return c.json({ message: "Invalid password" }, 401);
+    return c.json({ message: "Login successful" }, 200);
+  } catch (error) {
+    return handlePrismaError(error, c);
+  }
 };

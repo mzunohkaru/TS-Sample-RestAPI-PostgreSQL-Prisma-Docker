@@ -3,7 +3,7 @@ import * as dotenv from "dotenv";
 
 import userRouter from "./router/user";
 import postRouter from "./router/post";
-import errorHandler from "./middleware/error";
+import { errorHandler } from "../utils/error";
 
 dotenv.config();
 
@@ -25,4 +25,3 @@ app.get("/", (req: Request, res: Response) => {
 app.listen(port, () => {
   console.log(`Server is running🚀 http://localhost:${port}`);
 });
-
