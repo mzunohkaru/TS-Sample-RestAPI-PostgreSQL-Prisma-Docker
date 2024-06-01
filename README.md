@@ -5,7 +5,7 @@ TypeScriptとPostgreSQLを使用したプロジェクトで、Dockerコンテナ
 ## 前提条件
 
 - Docker
-- Node.js (>=20.x)
+- Node.js (>=14.x)
 - npm
 
 ## セットアップ
