@@ -72,7 +72,7 @@ export async function verifyToken(
     }
 
     // リクエスト情報を取得したユーザーで上書き
-    // req.body.user = user;
+    req.body.user = user;
     next();
   } else {
     return res.status(401).json("Unauthorized");
