@@ -8,7 +8,7 @@ export const getUsers = async (
   next: NextFunction
 ) => {
   try {
-    const user = await prisma.user.findFirst({
+    const user = await prisma.user.findMany({
       select: {
         id: true,
         name: true,

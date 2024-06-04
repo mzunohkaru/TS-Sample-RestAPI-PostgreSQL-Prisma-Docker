@@ -1,12 +1,12 @@
 import express from "express";
 
-import { vContentType } from "../middleware/validate";
+import { vRequestHeader } from "../middleware/validate";
 import { getPost, getPostSummary } from "../controller/post/read";
 
 const router = express.Router();
 
-router.get("/", vContentType, getPost);
-router.get("/summary", vContentType, getPostSummary);
+router.get("/", vRequestHeader, getPost);
+router.get("/summary", vRequestHeader, getPostSummary);
 
 export default router;
 

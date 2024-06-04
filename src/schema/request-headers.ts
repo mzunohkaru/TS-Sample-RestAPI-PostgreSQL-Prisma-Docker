@@ -1,10 +1,16 @@
 import { z } from "zod";
 
-const RequestHeader = z.object({
-  "content-type": z.string(),
-  "x-api-key": z.string().min(1),
+const RequestHeaderSchema = z.object({
+  "content-type": z.literal("application/json"),
+  authorization: z
+    .string()
+    .min(1)
+    .refine((val) => val.includes("bearer"), {
+      message:
+        "authorizationヘッダーには'Bearer'が含まれている必要があります。",
+    }),
 });
 
-type RequestHeader = z.infer<typeof RequestHeader>;
+type RequestHeaderSchema = z.infer<typeof RequestHeaderSchema>;
 
-export { RequestHeader };
+export { RequestHeaderSchema };

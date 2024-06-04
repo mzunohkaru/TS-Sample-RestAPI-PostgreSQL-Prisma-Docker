@@ -2,11 +2,11 @@ import { Request, Response, NextFunction } from "express";
 
 import prisma from "../../../utils/db";
 
-export const updateUser = async (
+export async function updateUser(
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+) {
   const { id } = req.params;
 
   const { name, email } = req.body;
@@ -27,4 +27,4 @@ export const updateUser = async (
   } catch (error) {
     next(error);
   }
-};
+}

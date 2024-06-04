@@ -14,6 +14,7 @@ export const getUsers = async (c: Context) => {
     });
     return c.json(users, 200);
   } catch (error) {
+    // TODO:Error Throw
     return handlePrismaError(error, c);
   }
 };
