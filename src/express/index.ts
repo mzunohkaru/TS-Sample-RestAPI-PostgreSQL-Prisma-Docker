@@ -3,7 +3,7 @@ import * as dotenv from "dotenv";
 
 import userRouter from "./router/user";
 import postRouter from "./router/post";
-import { errorHandler } from "../utils/error";
+import { errorHandler } from "./middleware/error";
 
 dotenv.config();
 
@@ -12,8 +12,8 @@ const port = process.env.PORT || 3000;
 
 app.use(express.json());
 
-app.use("/user", userRouter);
-app.use("/post", postRouter);
+app.use("/express/user", userRouter);
+app.use("/express/post", postRouter);
 
 // エラーハンドリングミドルウェアを追加
 app.use(errorHandler);

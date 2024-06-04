@@ -1,6 +1,6 @@
 import { Context } from "hono";
 
-import { handlePrismaError } from "../../../utils/error";
+import { handlePrismaError } from "../../middleware/error";
 import prisma from "../../../utils/db";
 
 export const getUsers = async (c: Context) => {

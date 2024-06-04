@@ -10,7 +10,7 @@ import fetchRouter from "./router/fetch";
 import { zValidator } from "@hono/zod-validator";
 import { RequestHeader } from "../schema/request-headers";
 
-const app = new Hono().basePath("/api");
+const app = new Hono().basePath("/hono");
 
 app.use(cors());
 app.use(logger());

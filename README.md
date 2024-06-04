@@ -20,6 +20,8 @@ TypeScriptとPostgreSQLを使用したプロジェクトで、Dockerコンテナ
 6. データベースに変更を反映する
    ※`npx prisma migrate deploy`
    ※`npx prisma migrate dev --create-only`
+7. 環境変数をコピー
+   `cp .env.example .env`
 
 ## 開発
 

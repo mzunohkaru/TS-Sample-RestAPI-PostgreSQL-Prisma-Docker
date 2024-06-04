@@ -2,7 +2,7 @@ import { Context } from "hono";
 
 import { CreateUserSchema, LoginUserSchema } from "../../../schema/user";
 import { hashPassword, comparePassword } from "../../../utils/hash";
-import { handlePrismaError } from "../../../utils/error";
+import { handlePrismaError } from "../../middleware/error";
 import prisma from "../../../utils/db";
 
 export const createUser = async (c: Context) => {
