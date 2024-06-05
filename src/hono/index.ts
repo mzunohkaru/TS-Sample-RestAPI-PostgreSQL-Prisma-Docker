@@ -8,20 +8,21 @@ import userRouter from "./router/user";
 import postRouter from "./router/post";
 import fetchRouter from "./router/fetch";
 import { zValidator } from "@hono/zod-validator";
-import { RequestHeader } from "../schema/request-headers";
+import { RequestAuthHeaderSchema } from "../schema/request-headers";
 
 const app = new Hono().basePath("/hono");
 
 app.use(cors());
 app.use(logger());
 app.use(prettyJSON());
-app.notFound((c) => c.text("Not found"));
+app.notFound((c) => c.text("404 Not found"));
 
 app.get("/", (c) => c.text("Hello, Hono!"));
 
 app
   .use(
-    zValidator("header", RequestHeader, (result, c) => {
+    "/user/auth/*",
+    zValidator("header", RequestAuthHeaderSchema, (result, c) => {
       if (!result.success) {
         return c.json({ message: result.error }, 400);
       }
@@ -42,7 +43,7 @@ serve({
   port: PORT,
 });
 
-console.log(`Server is running at http://localhost:${PORT}/api`);
+console.log(`Server is running at http://localhost:${PORT}/hono`);
 
 export default app;
 export type AppType = typeof app;

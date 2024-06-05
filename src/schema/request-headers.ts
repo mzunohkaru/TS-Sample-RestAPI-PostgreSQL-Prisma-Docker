@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const RequestHeaderSchema = z.object({
+const RequestAuthHeaderSchema = z.object({
   "content-type": z.literal("application/json"),
   authorization: z
     .string()
@@ -11,6 +11,6 @@ const RequestHeaderSchema = z.object({
     }),
 });
 
-type RequestHeaderSchema = z.infer<typeof RequestHeaderSchema>;
+type RequestAuthHeaderSchema = z.infer<typeof RequestAuthHeaderSchema>;
 
-export { RequestHeaderSchema };
+export { RequestAuthHeaderSchema };

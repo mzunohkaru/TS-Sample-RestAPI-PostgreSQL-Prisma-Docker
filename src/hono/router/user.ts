@@ -4,6 +4,7 @@ import { zValidator } from "@hono/zod-validator";
 import { CreateUserSchema, LoginUserSchema } from "../../schema/user";
 import { createUser, loginUser } from "../controller/user/create";
 import { getUsers, getUserById } from "../controller/user/read";
+import { updateUserById } from "../controller/user/update";
 
 const userRouter = new Hono()
   .post(
@@ -24,8 +25,9 @@ const userRouter = new Hono()
     }),
     loginUser
   )
-  .get("/", getUsers)
-  .get("/:id", getUserById);
+  .get("/read", getUsers)
+  .get("/read/:id", getUserById)
+  .put("/auth/put/:id", updateUserById);
 
 export default userRouter;
 export type AppType = typeof userRouter;

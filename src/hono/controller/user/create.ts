@@ -4,6 +4,7 @@ import { CreateUserSchema, LoginUserSchema } from "../../../schema/user";
 import { hashPassword, comparePassword } from "../../../utils/hash";
 import { handlePrismaError } from "../../middleware/error";
 import prisma from "../../../utils/db";
+import { generateToken } from "../../middleware/token";
 
 export const createUser = async (c: Context) => {
   try {
@@ -28,7 +29,10 @@ export const loginUser = async (c: Context) => {
     if (!user) return c.json({ message: "User not found" }, 404);
     const isPasswordCorrect = await comparePassword(password, user.password);
     if (!isPasswordCorrect) return c.json({ message: "Invalid password" }, 401);
-    return c.json({ message: "Login successful" }, 200);
+
+    const token = await generateToken(email);
+
+    return c.json({ token: token }, 200);
   } catch (error) {
     return handlePrismaError(error, c);
   }
