@@ -1,13 +1,13 @@
 import { Context } from "hono";
-import { Prisma } from "@prisma/client";
+import { prisma } from "../../utils/db";
 
 export function handlePrismaError(error: unknown, c: Context) {
   console.error("Error:", error);
   if (
-    error instanceof Prisma.PrismaClientKnownRequestError ||
-    error instanceof Prisma.PrismaClientUnknownRequestError ||
-    error instanceof Prisma.PrismaClientRustPanicError ||
-    error instanceof Prisma.PrismaClientValidationError
+    error instanceof prisma.PrismaClientKnownRequestError ||
+    error instanceof prisma.PrismaClientUnknownRequestError ||
+    error instanceof prisma.PrismaClientRustPanicError ||
+    error instanceof prisma.PrismaClientValidationError
   ) {
     return c.json({ message: error.message }, 500);
   }

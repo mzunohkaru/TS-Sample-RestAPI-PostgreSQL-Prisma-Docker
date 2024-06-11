@@ -1,7 +1,21 @@
 import { Context } from "hono";
 
 import { handlePrismaError } from "../../middleware/error";
-import prisma from "../../../utils/db";
+import { prismaClient } from "../../../utils/db";
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient({
+  log: [
+    {
+      emit: "event",
+      level: "query",
+    },
+  ],
+});
+
+prisma.$on("query", (e) => {
+  console.log("Query: " + e.query);
+});
 
 export const getUsers = async (c: Context) => {
   try {
@@ -22,7 +36,7 @@ export const getUsers = async (c: Context) => {
 export const getUserById = async (c: Context) => {
   try {
     const id = c.req.param("id");
-    const user = await prisma.user.findFirst({
+    const user = await prismaClient.user.findFirst({
       where: { id: Number(id) },
       include: {
         posts: true,

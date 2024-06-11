@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 
-import prisma from "../../../utils/db";
+import { prismaClient } from "../../../utils/db";
 
 export const getPost = async (
   req: Request,
@@ -8,7 +8,7 @@ export const getPost = async (
   next: NextFunction
 ) => {
   try {
-    const posts = await prisma.post.findMany();
+    const posts = await prismaClient.post.findMany();
     res.json(posts);
   } catch (error) {
     res.status(500).json({ message: "Internal Server Error" });
@@ -21,7 +21,7 @@ export const getPostSummary = async (
   next: NextFunction
 ) => {
   try {
-    const posts = await prisma.user_post_summary.findMany();
+    const posts = await prismaClient.user_post_summary.findMany();
     res.json(posts);
   } catch (error) {
     res.status(500).json({ message: "Internal Server Error" });

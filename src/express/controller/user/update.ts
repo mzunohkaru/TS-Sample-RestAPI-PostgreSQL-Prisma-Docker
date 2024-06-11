@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 
-import prisma from "../../../utils/db";
+import { prismaClient } from "../../../utils/db";
 
 export async function updateUser(
   req: Request,
@@ -16,7 +16,7 @@ export async function updateUser(
   if (email) updateData.email = email.trim().toLowerCase();
 
   try {
-    const user = await prisma.user.update({
+    const user = await prismaClient.user.update({
       where: { id: Number(id) },
       data: updateData,
     });

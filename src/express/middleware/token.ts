@@ -1,7 +1,7 @@
 import express, { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 
-import prisma from "../../utils/db";
+import { prismaClient } from "../../utils/db";
 
 export function generateTokens(emailData: string) {
   // JWTの発行
@@ -62,7 +62,7 @@ export async function verifyToken(
   // トークンが存在する場合
   if (decodedToken) {
     // ユーザーを取得（トークンはもともとユーザーのIDから生成したものであるため検索可能）
-    const user = await prisma.user.findUnique({
+    const user = await prismaClient.user.findUnique({
       where: { email: (decodedToken as any).email },
     });
 

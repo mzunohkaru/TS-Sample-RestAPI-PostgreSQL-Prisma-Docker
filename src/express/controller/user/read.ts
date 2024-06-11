@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 
-import prisma from "../../../utils/db";
+import { prismaClient } from "../../../utils/db";
 
 export const getUsers = async (
   req: Request,
@@ -8,7 +8,7 @@ export const getUsers = async (
   next: NextFunction
 ) => {
   try {
-    const user = await prisma.user.findMany({
+    const user = await prismaClient.user.findMany({
       select: {
         id: true,
         name: true,
@@ -27,7 +27,7 @@ export const getUserById = async (
   next: NextFunction
 ) => {
   const { id } = req.params;
-  const user = await prisma.user.findFirst({
+  const user = await prismaClient.user.findFirst({
     where: { id: Number(id) },
     include: {
       posts: true,

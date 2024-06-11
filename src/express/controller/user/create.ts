@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 
-import prisma from "../../../utils/db";
+import { prismaClient } from "../../../utils/db";
 import { hashPassword, comparePassword } from "../../../utils/hash";
 import { generateTokens } from "../../middleware/token";
 
@@ -12,7 +12,7 @@ export async function createUser(
   try {
     const { name, email, password } = req.body;
     const hashedPassword = await hashPassword(password.trim());
-    const user = await prisma.user.create({
+    const user = await prismaClient.user.create({
       data: {
         name: name,
         email: email.trim().toLowerCase(),
@@ -33,7 +33,7 @@ export async function loginUser(
   try {
     const { email, password } = req.body;
     const emailData = email.trim().toLowerCase();
-    const user = await prisma.user.findFirst({
+    const user = await prismaClient.user.findFirst({
       where: { email: emailData },
     });
 
@@ -80,7 +80,7 @@ export async function upsertUser(
 
   const hashedPassword = await hashPassword(password.trim());
   try {
-    const user = await prisma.$transaction(async (prisma) => {
+    const user = await prismaClient.$transaction(async (prisma) => {
       return await prisma.user.upsert({
         where: { id: Number(id) },
         update: {
