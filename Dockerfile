@@ -26,7 +26,7 @@ ENV NODE_ENV=development
 ENV PORT=3000
 ENV TZ=Asia/Tokyo
 ENV TS_NODE_PROJECT=tsconfig.json
-ENV TS_NODE_COMPILER_OPTIONS={"module":"commonjs"}
+ENV TS_NODE_COMPILER_OPTIONS='{"module":"commonjs"}'
 
 EXPOSE 3000
 

@@ -2,7 +2,6 @@
   "compilerOptions": {
     "target": "es2020",
     "module": "commonjs",
-    "rootDir": "./src",
     "sourceMap": true,
     "removeComments": true,
     "noUnusedLocals": true,
@@ -26,5 +25,5 @@
       "module": "commonjs"
     }
   },
-  "exclude": ["node_modules", "*/*seed.ts"]
+  "exclude": ["node_modules"]
 }
