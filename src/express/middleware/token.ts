@@ -1,4 +1,4 @@
-import express, { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 
 import { prismaClient } from "../../utils/db";
@@ -73,7 +73,7 @@ export async function verifyToken(
 
     // リクエスト情報を取得したユーザーで上書き
     req.body.user = user;
-    next();
+    return next();
   } else {
     return res.status(401).json("Unauthorized");
   }

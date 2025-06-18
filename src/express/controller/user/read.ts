@@ -28,7 +28,7 @@ export const getUserById = async (
 ) => {
   const { id } = req.params;
   const user = await prismaClient.user.findFirst({
-    where: { id: Number(id) },
+    where: { id: id },
     include: {
       posts: true,
     },

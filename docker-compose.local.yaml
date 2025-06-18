@@ -1,24 +1,76 @@
 services:
   postgres:
-    image: postgres:latest
+    image: postgres:16-alpine
     environment:
       POSTGRES_USER: myuser
       POSTGRES_PASSWORD: mypassword
       POSTGRES_DB: mydb
+      POSTGRES_INITDB_ARGS: "--auth-host=md5 --auth-local=md5"
+      POSTGRES_HOST_AUTH_METHOD: md5
     volumes:
       - postgres-data:/var/lib/postgresql/data
+      - ./docker/postgres/postgresql.conf:/etc/postgresql/postgresql.conf:ro
+      - ./docker/postgres/pg_hba.conf:/etc/postgresql/pg_hba.conf:ro
     ports:
       - 5432:5432
-  # app:
-  #   build: .
-  #   command: npm run start:hono
-  #   volumes:
-  #     - .:/app
-  #     - /app/node_modules
-  #   ports:
-  #     - "3000:3000"
-  #   depends_on:
-  #     - postgres
+    restart: always
+    command:
+      [
+        "postgres",
+        "-c",
+        "config_file=/etc/postgresql/postgresql.conf",
+        "-c",
+        "hba_file=/etc/postgresql/pg_hba.conf",
+        "-c",
+        "log_statement=all",
+        "-c",
+        "log_connections=on",
+        "-c",
+        "log_disconnections=on",
+        "-c",
+        "log_lock_waits=on",
+        "-c",
+        "log_min_duration_statement=1000",
+        "-c",
+        "shared_preload_libraries=pg_stat_statements",
+      ]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U myuser -d mydb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+    security_opt:
+      - no-new-privileges:true
+  app:
+    build: .
+    command: npm run dev:express
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/dist
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://myuser:mypassword@postgres:5432/mydb?schema=public
+    networks:
+      - app-network
+    restart: unless-stopped
 
 volumes:
   postgres-data:
+    driver: local
+
+networks:
+  app-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { RequestHeaderSchema } from "../../schema/request-headers";
+import { RequestAuthHeaderSchema } from "../../schema/request-headers";
 import {
   CreateUserSchema,
   LoginUserSchema,
@@ -11,7 +11,7 @@ export const vRequestHeader = (
   res: Response,
   next: NextFunction
 ) => {
-  const result = RequestHeaderSchema.safeParse(req.headers);
+  const result = RequestAuthHeaderSchema.safeParse(req.headers);
   if (!result.success) {
     res.status(422).json({ errors: result.error.flatten() });
     return;
@@ -43,5 +43,5 @@ export const vUpdate = (req: Request, res: Response, next: NextFunction) => {
   if (!validationResult.success) {
     return res.status(422).json({ errors: validationResult.error.flatten() });
   }
-  next();
+  return next();
 };

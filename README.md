@@ -12,7 +12,7 @@ TypeScriptとPostgreSQLを使用したプロジェクトで、Dockerコンテナ
 
 1. 依存関係をインストール: `npm install --save-dev typescript ts-node @types/node prisma`
 2. Prismaを初期化: `npx prisma init`
-3. Dockerコンテナを起動: `make up`
+3. Dockerコンテナを起動: `make setup`
 4. データベースマイグレーションを適用: `npx prisma migrate dev --name <migration_name>`
 5. Prismaが生成した、migration.sqlファイルに追加で記述
    ※Check制約

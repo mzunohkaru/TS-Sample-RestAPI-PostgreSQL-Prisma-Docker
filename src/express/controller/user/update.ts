@@ -17,7 +17,7 @@ export async function updateUser(
 
   try {
     const user = await prismaClient.user.update({
-      where: { id: Number(id) },
+      where: { id: id },
       data: updateData,
     });
     res.status(200).json({

@@ -1,29 +1,34 @@
-# Dockerfile
-FROM node:20.11.1
+# Development image for local development
+FROM node:20-alpine
 
-# タイムゾーンを東京に設定
-ENV TZ=Asia/Tokyo
+# Install essential packages for Prisma and OpenSSL
+RUN apk add --no-cache \
+    libc6-compat \
+    openssl \
+    openssl-dev
 
-# アプリケーションディレクトリを作成
-WORKDIR /usr/src/app
+WORKDIR /app
 
-# アプリケーションの依存関係をインストール
+# Copy package files
 COPY package*.json ./
-RUN npm install
 
-# アプリケーションのソースをバンドル
+# Install all dependencies (including devDependencies)
+RUN npm ci
+
+# Copy source code
 COPY . .
 
-# Prismaのクライアントを生成
+# Generate Prisma client
 RUN npx prisma generate
 
-# ポート3000でアプリケーションを実行
+# Set environment
+ENV NODE_ENV=development
+ENV PORT=3000
+ENV TZ=Asia/Tokyo
+ENV TS_NODE_PROJECT=tsconfig.json
+ENV TS_NODE_COMPILER_OPTIONS={"module":"commonjs"}
+
 EXPOSE 3000
 
-# AWS ECSでのヘルスチェック
-# HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-#   CMD curl -f http://localhost:3000/ || exit 1
-
-
-# CMD [ "npm", "run", "start:express" ]
-CMD [ "npm", "run", "start:hono" ]
+# For development, we'll use nodemon
+CMD ["npm", "run", "dev:express"]

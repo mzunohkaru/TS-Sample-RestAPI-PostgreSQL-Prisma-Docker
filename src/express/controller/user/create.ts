@@ -82,7 +82,7 @@ export async function upsertUser(
   try {
     const user = await prismaClient.$transaction(async (prisma) => {
       return await prisma.user.upsert({
-        where: { id: Number(id) },
+        where: { id: id },
         update: {
           name: name,
           email: email.trim().toLowerCase(),

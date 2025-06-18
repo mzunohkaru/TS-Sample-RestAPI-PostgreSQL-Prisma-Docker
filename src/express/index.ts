@@ -23,5 +23,5 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 app.listen(port, () => {
-  console.log(`Server is running🚀 http://localhost:${port}/express`);
+  console.log(`🚀 Running Express Server http://localhost:${port}/express`);
 });

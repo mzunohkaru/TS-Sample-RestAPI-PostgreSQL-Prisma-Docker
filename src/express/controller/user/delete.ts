@@ -6,7 +6,7 @@ export const deleteUser = async (req: Request, res: Response, next: NextFunction
   const { id } = req.params;
   try {
     const user = await prismaClient.user.delete({
-      where: { id: Number(id) },
+      where: { id: id },
     });
     res.status(200).json({
       message: "User deleted successfully",

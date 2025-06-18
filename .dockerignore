@@ -6,4 +6,3 @@ node_modules
 .env.example
 DB.log.txt
 README.md
-
