@@ -1,14 +1,14 @@
 import { Request, Response, NextFunction } from "express";
 import { ZodSchema } from "zod";
-import { AppError } from "../../utils/error";
-import { logger } from "../../utils/logger";
+import { AppError } from "../utils/error";
+import { logger } from "../utils/logger";
 import {
   CreateUserSchema,
   UpdateUserSchema,
   GetUsersQuerySchema,
   GetUserParamsSchema,
-} from "../../schema/user";
-import { RequestAuthHeaderSchema } from "../../schema/request-headers";
+} from "../schema/user";
+import { RequestAuthHeaderSchema } from "../schema/request-headers";
 
 /**
  * Generic validation middleware factory

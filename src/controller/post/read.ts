@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 
-import { prismaClient } from "../../../utils/db";
+import { prismaClient } from "../../utils/db";
 
 export const getPost = async (
   req: Request,

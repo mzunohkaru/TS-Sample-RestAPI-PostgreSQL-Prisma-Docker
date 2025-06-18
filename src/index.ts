@@ -9,7 +9,7 @@ import authRouter from "./router/auth";
 import { errorHandler } from "./middleware/error";
 import { requestLogger } from "./middleware/requestLogger";
 import { generalRateLimit } from "./middleware/rateLimit";
-import { config } from "../config/env";
+import { config } from "./config/env";
 
 dotenv.config();
 
@@ -56,9 +56,9 @@ app.use(requestLogger);
 app.use(generalRateLimit);
 
 // API routes
-app.use("/express/auth", authRouter);
-app.use("/express/user", userRouter);
-app.use("/express/post", postRouter);
+app.use("/api/auth", authRouter);
+app.use("/api/user", userRouter);
+app.use("/api/post", postRouter);
 
 // Health check endpoint
 app.get("/health", (req: Request, res: Response) => {
@@ -77,5 +77,5 @@ app.get("/", (req: Request, res: Response) => {
 app.use(errorHandler);
 
 app.listen(port, () => {
-  console.log(`🚀 Running Express Server http://localhost:${port}/express`);
+  console.log(`🚀 Running Express Server http://localhost:${port}/api`);
 });

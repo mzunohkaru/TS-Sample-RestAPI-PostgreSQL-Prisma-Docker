@@ -1,10 +1,10 @@
 import { Request, Response, NextFunction } from "express";
-import { RequestAuthHeaderSchema } from "../../schema/request-headers";
+import { RequestAuthHeaderSchema } from "../schema/request-headers";
 import {
   CreateUserSchema,
   LoginUserSchema,
   UpdateUserSchema,
-} from "../../schema/user";
+} from "../schema/user";
 
 export const vRequestHeader = (
   req: Request,

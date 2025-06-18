@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
-import { AppError } from "../../utils/error";
-import { logger } from "../../utils/logger";
-import { config } from "../../config/env";
+import { AppError } from "../utils/error";
+import { logger } from "../utils/logger";
+import { config } from "../config/env";
 import { ZodError } from "zod";
 
 export const errorHandler = (
@@ -61,6 +61,7 @@ export const errorHandler = (
       ...(err.details && { details: err.details }),
       requestId,
     });
+    return;
   }
 
   // Handle JWT errors

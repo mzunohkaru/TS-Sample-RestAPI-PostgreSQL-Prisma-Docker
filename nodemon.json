@@ -2,7 +2,7 @@
   "watch": ["src"],
   "ext": "ts,json",
   "ignore": ["src/**/*.spec.ts", "src/**/*.test.ts"],
-  "exec": "ts-node --transpile-only src/express/index.ts",
+  "exec": "ts-node --transpile-only src/index.ts",
   "env": {
     "NODE_ENV": "development",
     "TS_NODE_PROJECT": "tsconfig.json",

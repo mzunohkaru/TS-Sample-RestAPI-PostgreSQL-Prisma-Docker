@@ -3,11 +3,6 @@ setup:
 	@docker-compose -f docker-compose.local.yaml up --build
 	@echo "Dockerコンテナが起動しました。"
 
-db-setup:
-	@echo "データベースを起動します..."
-	@docker-compose -f docker-compose.db.yaml up --build
-	@echo "データベースが起動しました。"
-
 down:
 	docker-compose -f docker-compose.local.yaml down
 

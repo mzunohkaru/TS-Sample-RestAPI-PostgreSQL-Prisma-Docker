@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import { Prisma } from "@prisma/client";
 import { ZodError } from "zod";
-import { AppError, NotFoundError } from "../../utils/error";
-import { logger } from "../../utils/logger";
+import { AppError, NotFoundError } from "../utils/error";
+import { logger } from "../utils/logger";
 
 interface ErrorResponse {
   success: false;

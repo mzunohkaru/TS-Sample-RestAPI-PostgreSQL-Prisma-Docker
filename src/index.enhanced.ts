@@ -24,8 +24,8 @@ import {
 import { generalRateLimit } from "./middleware/rateLimit";
 import { sanitizeInput } from "./middleware/validation";
 
-import { config } from "../config/env";
-import { logger } from "../utils/logger";
+import { config } from "./config/env";
+import { logger } from "./utils/logger";
 
 dotenv.config();
 
@@ -194,11 +194,6 @@ app.get("/metrics", metricsEndpoint);
 app.use("/api/auth", authRouter);
 app.use("/api/users", userRouter);
 app.use("/api/posts", postRouter);
-
-// Legacy routes (for backward compatibility)
-app.use("/express/auth", authRouter);
-app.use("/express/user", userRouter);
-app.use("/express/post", postRouter);
 
 // Root endpoint
 app.get("/", (req: Request, res: Response) => {

@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { AuthService } from "../../services/auth.service";
-import { AppError } from "../../../utils/error";
-import { logger } from "../../../utils/logger";
+import { AppError } from "../../utils/error";
+import { logger } from "../../utils/logger";
 
 const authService = new AuthService();
 

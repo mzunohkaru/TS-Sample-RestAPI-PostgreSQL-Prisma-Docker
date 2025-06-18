@@ -1,73 +1,80 @@
 import { Request, Response, NextFunction } from "express";
 import { UserService } from "../../services/user.service";
-import { AppError } from "../../../utils/error";
-import { logger } from "../../../utils/logger";
-import { CreateUserSchema, GetUserParamsSchema } from "../../../schema/user";
+import { AppError } from "../../utils/error";
+import { logger } from "../../utils/logger";
+import { GetUsersQuerySchema, GetUserParamsSchema } from "../../schema/user";
 
 const userService = new UserService();
 
 /**
- * @desc Create a new user (Registration)
- * @route POST /api/users/register
- * @access Public
+ * @desc Get all users with pagination, search, and sorting
+ * @route GET /api/users
+ * @access Public (consider adding authentication for production)
  */
-export async function createUser(
+export const getUsers = async (
   req: Request,
   res: Response,
   next: NextFunction,
-) {
+) => {
   try {
     const startTime = Date.now();
     const requestId = req.headers["x-request-id"] as string;
 
     logger.info(
-      "Creating new user",
+      "Getting users list",
       {
+        query: req.query,
         ip: req.ip,
         userAgent: req.headers["user-agent"],
       },
       { requestId },
     );
 
-    // Validate request body
-    const validationResult = CreateUserSchema.safeParse(req.body);
+    // Validate and parse query parameters
+    const validationResult = GetUsersQuerySchema.safeParse(req.query);
     if (!validationResult.success) {
       logger.warn(
-        "Invalid user creation data",
+        "Invalid query parameters for get users",
         {
           errors: validationResult.error.flatten(),
-          ip: req.ip,
+          query: req.query,
         },
         { requestId },
       );
 
       throw new AppError(
-        "Invalid user data",
+        "Invalid query parameters",
         400,
-        "INVALID_USER_DATA",
+        "INVALID_QUERY_PARAMETERS",
         validationResult.error.flatten().fieldErrors,
       );
     }
 
-    const userData = validationResult.data;
-    const user = await userService.createUser(userData);
+    const { page, limit, search, sortBy, sortOrder } = validationResult.data;
+
+    const result = await userService.getUsersPaginated(page, limit, {
+      search,
+      sortBy,
+      sortOrder,
+    });
 
     const duration = Date.now() - startTime;
 
     logger.info(
-      "User created successfully",
+      "Users list retrieved successfully",
       {
-        userId: user.id,
-        email: user.email,
+        count: result.users.length,
+        totalCount: result.pagination.totalCount,
+        page,
         duration: `${duration}ms`,
       },
       { requestId },
     );
 
-    res.status(201).json({
+    res.status(200).json({
       success: true,
-      message: "User created successfully",
-      data: user,
+      data: result.users,
+      pagination: result.pagination,
       meta: {
         requestId,
         duration,
@@ -77,35 +84,35 @@ export async function createUser(
   } catch (error) {
     const duration = Date.now() - (res.locals.startTime || Date.now());
     logger.error(
-      "Error creating user",
+      "Error retrieving users list",
       {
         error: error instanceof Error ? error.message : "Unknown error",
         duration: `${duration}ms`,
-        ip: req.ip,
+        query: req.query,
       },
       { requestId: req.headers["x-request-id"] as string },
     );
 
     next(error);
   }
-}
+};
 
 /**
- * @desc Create or update user (Upsert operation)
- * @route POST /api/users/:id
- * @access Private (Authentication + Ownership required)
+ * @desc Get user by ID
+ * @route GET /api/users/:id
+ * @access Private (Authentication required)
  */
-export async function upsertUser(
+export const getUserById = async (
   req: Request,
   res: Response,
   next: NextFunction,
-) {
+) => {
   try {
     const startTime = Date.now();
     const requestId = req.headers["x-request-id"] as string;
 
     logger.info(
-      "Upserting user",
+      "Getting user by ID",
       {
         userId: req.params.id,
         ip: req.ip,
@@ -117,7 +124,7 @@ export async function upsertUser(
     const paramsValidation = GetUserParamsSchema.safeParse(req.params);
     if (!paramsValidation.success) {
       logger.warn(
-        "Invalid user ID parameter for upsert",
+        "Invalid user ID parameter",
         {
           userId: req.params.id,
           errors: paramsValidation.error.flatten(),
@@ -133,76 +140,39 @@ export async function upsertUser(
       );
     }
 
-    // Validate request body
-    const bodyValidation = CreateUserSchema.safeParse(req.body);
-    if (!bodyValidation.success) {
-      logger.warn(
-        "Invalid user upsert data",
-        {
-          userId: req.params.id,
-          errors: bodyValidation.error.flatten(),
-        },
-        { requestId },
-      );
-
-      throw new AppError(
-        "Invalid user data",
-        400,
-        "INVALID_USER_DATA",
-        bodyValidation.error.flatten().fieldErrors,
-      );
-    }
-
     const { id } = paramsValidation.data;
-    const userData = bodyValidation.data;
 
-    // Check if user exists to determine if it's create or update
-    const existingUser = await userService.getUserById(id);
-    let user;
-    let isCreated = false;
+    const user = await userService.getUserById(id);
 
-    if (existingUser) {
-      // Update existing user
-      user = await userService.updateUser(id, userData);
-      logger.info("User updated via upsert", { userId: id }, { requestId });
-    } else {
-      // Create new user with specific ID (if your system allows it)
-      user = await userService.createUser(userData);
-      isCreated = true;
-      logger.info(
-        "User created via upsert",
-        { userId: user.id },
-        { requestId },
-      );
+    if (!user) {
+      logger.warn("User not found", { userId: id }, { requestId });
+      throw new AppError("User not found", 404, "USER_NOT_FOUND");
     }
 
     const duration = Date.now() - startTime;
 
     logger.info(
-      "User upsert completed successfully",
+      "User retrieved successfully",
       {
-        userId: user.id,
-        operation: isCreated ? "created" : "updated",
+        userId: id,
         duration: `${duration}ms`,
       },
       { requestId },
     );
 
-    res.status(isCreated ? 201 : 200).json({
+    res.status(200).json({
       success: true,
-      message: `User ${isCreated ? "created" : "updated"} successfully`,
       data: user,
       meta: {
         requestId,
         duration,
-        operation: isCreated ? "created" : "updated",
         timestamp: new Date().toISOString(),
       },
     });
   } catch (error) {
     const duration = Date.now() - (res.locals.startTime || Date.now());
     logger.error(
-      "Error upserting user",
+      "Error retrieving user",
       {
         userId: req.params.id,
         error: error instanceof Error ? error.message : "Unknown error",
@@ -213,4 +183,4 @@ export async function upsertUser(
 
     next(error);
   }
-}
+};

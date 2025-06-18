@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { logger } from "../../utils/logger";
+import { logger } from "../utils/logger";
 import { v4 as uuidv4 } from "uuid";
 
 export interface RequestWithId extends Request {

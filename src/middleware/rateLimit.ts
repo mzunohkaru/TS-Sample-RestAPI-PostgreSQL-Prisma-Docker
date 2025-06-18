@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
-import { config } from "../../config/env";
-import { RateLimitError } from "../../utils/error";
-import { logger } from "../../utils/logger";
+import { config } from "../config/env";
+import { RateLimitError } from "../utils/error";
+import { logger } from "../utils/logger";
 
 interface RateLimitEntry {
   count: number;

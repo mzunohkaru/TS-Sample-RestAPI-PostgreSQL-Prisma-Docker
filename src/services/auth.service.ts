@@ -1,8 +1,8 @@
 import jwt from "jsonwebtoken";
 import { User } from "@prisma/client";
 import { UserService } from "./user.service";
-import { AppError } from "../../utils/error";
-import { config } from "../../config/env";
+import { AppError } from "../utils/error";
+import { config } from "../config/env";
 
 export interface TokenPayload {
   userId: string;

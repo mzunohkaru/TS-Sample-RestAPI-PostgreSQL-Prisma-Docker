@@ -33,7 +33,7 @@ npm run build
 ls -la dist/
 
 # 基本動作テスト
-NODE_ENV=production node dist/express/index.js &
+NODE_ENV=production node dist/index.js &
 sleep 2
 curl http://localhost:3000/health
 kill %1

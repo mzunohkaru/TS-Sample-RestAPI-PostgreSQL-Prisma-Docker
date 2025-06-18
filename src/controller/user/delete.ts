@@ -1,27 +1,27 @@
 import { Request, Response, NextFunction } from "express";
 import { UserService } from "../../services/user.service";
-import { AppError } from "../../../utils/error";
-import { logger } from "../../../utils/logger";
-import { UpdateUserSchema, GetUserParamsSchema } from "../../../schema/user";
+import { AppError } from "../../utils/error";
+import { logger } from "../../utils/logger";
+import { GetUserParamsSchema } from "../../schema/user";
 
 const userService = new UserService();
 
 /**
- * @desc Update user by ID
- * @route PUT /api/users/:id
+ * @desc Delete user by ID
+ * @route DELETE /api/users/:id
  * @access Private (Authentication + Ownership required)
  */
-export async function updateUser(
+export const deleteUser = async (
   req: Request,
   res: Response,
   next: NextFunction,
-) {
+) => {
   try {
     const startTime = Date.now();
     const requestId = req.headers["x-request-id"] as string;
 
     logger.info(
-      "Updating user",
+      "Deleting user",
       {
         userId: req.params.id,
         ip: req.ip,
@@ -34,7 +34,7 @@ export async function updateUser(
     const paramsValidation = GetUserParamsSchema.safeParse(req.params);
     if (!paramsValidation.success) {
       logger.warn(
-        "Invalid user ID parameter for update",
+        "Invalid user ID parameter for deletion",
         {
           userId: req.params.id,
           errors: paramsValidation.error.flatten(),
@@ -50,77 +50,71 @@ export async function updateUser(
       );
     }
 
-    // Validate request body
-    const bodyValidation = UpdateUserSchema.safeParse(req.body);
-    if (!bodyValidation.success) {
-      logger.warn(
-        "Invalid user update data",
-        {
-          userId: req.params.id,
-          errors: bodyValidation.error.flatten(),
-        },
-        { requestId },
-      );
-
-      throw new AppError(
-        "Invalid update data",
-        400,
-        "INVALID_UPDATE_DATA",
-        bodyValidation.error.flatten().fieldErrors,
-      );
-    }
-
     const { id } = paramsValidation.data;
-    const updateData = bodyValidation.data;
 
-    // Check if there's actually data to update
-    if (Object.keys(updateData).length === 0) {
+    // Additional security check: ensure user exists before deletion
+    const existingUser = await userService.getUserById(id);
+    if (!existingUser) {
       logger.warn(
-        "No fields provided for update",
+        "Attempt to delete non-existent user",
         { userId: id },
         { requestId },
       );
-      throw new AppError("No fields to update", 400, "NO_UPDATE_FIELDS");
+      throw new AppError("User not found", 404, "USER_NOT_FOUND");
     }
 
-    const updatedUser = await userService.updateUser(id, updateData);
+    // Log user info before deletion for audit trail
+    logger.info(
+      "User found for deletion",
+      {
+        userId: id,
+        email: existingUser.email,
+        name: existingUser.name,
+      },
+      { requestId },
+    );
+
+    const deletedUser = await userService.deleteUser(id);
 
     const duration = Date.now() - startTime;
 
     logger.info(
-      "User updated successfully",
+      "User deleted successfully",
       {
         userId: id,
-        updatedFields: Object.keys(updateData),
+        email: deletedUser.email,
         duration: `${duration}ms`,
       },
       { requestId },
     );
 
+    // Return minimal information about deleted user for security
     res.status(200).json({
       success: true,
-      message: "User updated successfully",
-      data: updatedUser,
+      message: "User deleted successfully",
+      data: {
+        id: deletedUser.id,
+        email: deletedUser.email,
+        deletedAt: new Date().toISOString(),
+      },
       meta: {
         requestId,
         duration,
-        updatedFields: Object.keys(updateData),
         timestamp: new Date().toISOString(),
       },
     });
   } catch (error) {
     const duration = Date.now() - (res.locals.startTime || Date.now());
     logger.error(
-      "Error updating user",
+      "Error deleting user",
       {
         userId: req.params.id,
         error: error instanceof Error ? error.message : "Unknown error",
         duration: `${duration}ms`,
-        requestBody: req.body,
       },
       { requestId: req.headers["x-request-id"] as string },
     );
 
     next(error);
   }
-}
+};

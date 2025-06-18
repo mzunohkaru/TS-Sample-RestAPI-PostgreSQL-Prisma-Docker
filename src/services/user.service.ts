@@ -1,9 +1,9 @@
 import { User, Prisma } from "@prisma/client";
-import { prismaClient } from "../../utils/db";
-import { hashPassword, comparePassword } from "../../utils/hash";
-import { AppError } from "../../utils/error";
-import { logger } from "../../utils/logger";
-import { CreateUserSchema, UpdateUserSchema } from "../../schema/user";
+import { prismaClient } from "../utils/db";
+import { hashPassword, comparePassword } from "../utils/hash";
+import { AppError } from "../utils/error";
+import { logger } from "../utils/logger";
+import { CreateUserSchema, UpdateUserSchema } from "../schema/user";
 
 export interface PaginatedUsers {
   users: Omit<User, "password">[];
