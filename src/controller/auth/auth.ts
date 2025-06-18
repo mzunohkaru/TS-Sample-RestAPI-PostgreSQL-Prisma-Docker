@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { AuthService } from "../../services/auth.service";
 import { AppError } from "../../utils/error";
 import { logger } from "../../utils/logger";
+import { AuthenticatedRequest } from "../../middleware/auth";
 
 const authService = new AuthService();
 
@@ -13,18 +14,10 @@ const authService = new AuthService();
 export const login = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ): Promise<void> => {
   try {
     const { email, password } = req.body;
-
-    if (!email || !password) {
-      throw new AppError(
-        "Email and password are required",
-        400,
-        "MISSING_CREDENTIALS",
-      );
-    }
 
     const result = await authService.login(email, password);
 
@@ -34,7 +27,7 @@ export const login = async (
         userId: result.user.id,
         email: result.user.email,
       },
-      { requestId: req.headers["x-request-id"] as string },
+      { requestId: req.headers["x-request-id"] as string }
     );
 
     res.status(200).json({
@@ -58,25 +51,17 @@ export const login = async (
 export const refreshToken = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ): Promise<void> => {
   try {
     const { refreshToken } = req.body;
-
-    if (!refreshToken) {
-      throw new AppError(
-        "Refresh token is required",
-        400,
-        "MISSING_REFRESH_TOKEN",
-      );
-    }
 
     const tokens = await authService.refreshToken(refreshToken);
 
     logger.info(
       "Token refreshed successfully",
       {},
-      { requestId: req.headers["x-request-id"] as string },
+      { requestId: req.headers["x-request-id"] as string }
     );
 
     res.status(200).json({
@@ -97,7 +82,7 @@ export const refreshToken = async (
 export const verifyToken = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ): Promise<void> => {
   try {
     const requestId = req.headers["x-request-id"] as string;
@@ -107,7 +92,7 @@ export const verifyToken = async (
       throw new AppError(
         "Access token is required",
         401,
-        "ACCESS_TOKEN_REQUIRED",
+        "ACCESS_TOKEN_REQUIRED"
       );
     }
 
@@ -121,7 +106,7 @@ export const verifyToken = async (
       logger.info(
         "Access token verified successfully",
         { userId: payload.userId },
-        { requestId },
+        { requestId }
       );
 
       res.status(200).json({
@@ -147,7 +132,7 @@ export const verifyToken = async (
           throw new AppError(
             "Access token expired and no refresh token provided",
             401,
-            "TOKEN_EXPIRED_NO_REFRESH",
+            "TOKEN_EXPIRED_NO_REFRESH"
           );
         }
 
@@ -157,13 +142,13 @@ export const verifyToken = async (
 
           // 新しいアクセストークンを検証してユーザー情報を取得
           const newPayload = authService.verifyAccessToken(
-            newTokens.accessToken,
+            newTokens.accessToken
           );
 
           logger.info(
             "Token automatically refreshed due to expiration",
             { userId: newPayload.userId },
-            { requestId },
+            { requestId }
           );
 
           res.status(200).json({
@@ -186,13 +171,13 @@ export const verifyToken = async (
             logger.warn(
               "Both access and refresh tokens are invalid/expired",
               {},
-              { requestId },
+              { requestId }
             );
 
             throw new AppError(
               "Both access and refresh tokens are expired. Please login again",
               401,
-              "TOKENS_EXPIRED",
+              "TOKENS_EXPIRED"
             );
           }
           throw refreshError;
@@ -212,44 +197,13 @@ export const verifyToken = async (
  * @access Private (requires access token)
  */
 export const logout = async (
-  req: Request,
+  req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ): Promise<void> => {
   try {
     const requestId = req.headers["x-request-id"] as string;
-    const authHeader = req.headers.authorization;
-
-    if (!authHeader) {
-      throw new AppError(
-        "Access token is required for logout",
-        401,
-        "ACCESS_TOKEN_REQUIRED",
-      );
-    }
-
-    let userId: string;
-
-    try {
-      const accessToken = authService.extractTokenFromHeader(authHeader);
-      const payload = authService.verifyAccessToken(accessToken);
-      userId = payload.userId;
-    } catch (tokenError) {
-      if (
-        tokenError instanceof AppError &&
-        tokenError.code === "TOKEN_EXPIRED"
-      ) {
-        // ログアウト時はトークンが期限切れでも処理を続行
-        logger.warn("Logout attempted with expired token", {}, { requestId });
-
-        res.status(200).json({
-          success: true,
-          message: "Logout successful (token was already expired)",
-        });
-        return;
-      }
-      throw tokenError;
-    }
+    const { userId } = req.user;
 
     // TODO: Implement token blacklisting for proper logout
     logger.info("User logged out", { userId }, { requestId });
@@ -269,113 +223,33 @@ export const logout = async (
  * @access Private (requires access token)
  */
 export const me = async (
-  req: Request,
+  req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ): Promise<void> => {
   try {
     const requestId = req.headers["x-request-id"] as string;
-    const authHeader = req.headers.authorization;
 
-    if (!authHeader) {
-      throw new AppError(
-        "Access token is required",
-        401,
-        "ACCESS_TOKEN_REQUIRED",
-      );
-    }
+    // authenticateミドルウェアで既に認証済み
+    const user = req.user;
+    const tokenStatus = "valid";
 
-    let user: any;
-    let tokenStatus = "valid";
-    let newTokens: any = null;
+    // 基本認証が成功した場合はそのまま使用
+    logger.info(
+      "User profile retrieved successfully",
+      { userId: user.userId },
+      { requestId }
+    );
 
-    try {
-      const accessToken = authService.extractTokenFromHeader(authHeader);
-      const payload = authService.verifyAccessToken(accessToken);
-
-      user = {
-        userId: payload.userId,
-        email: payload.email,
-      };
-
-      logger.info(
-        "User profile retrieved successfully",
-        { userId: payload.userId },
-        { requestId },
-      );
-    } catch (tokenError) {
-      if (
-        tokenError instanceof AppError &&
-        tokenError.code === "TOKEN_EXPIRED"
-      ) {
-        // アクセストークンが期限切れの場合、リフレッシュトークンをチェック
-        const { refreshToken } = req.body;
-
-        if (!refreshToken) {
-          throw new AppError(
-            "Access token expired and no refresh token provided",
-            401,
-            "TOKEN_EXPIRED_NO_REFRESH",
-          );
-        }
-
-        try {
-          // リフレッシュトークンで新しいトークンを生成
-          newTokens = await authService.refreshToken(refreshToken);
-
-          // 新しいアクセストークンを検証してユーザー情報を取得
-          const newPayload = authService.verifyAccessToken(
-            newTokens.accessToken,
-          );
-
-          user = {
-            userId: newPayload.userId,
-            email: newPayload.email,
-          };
-
-          tokenStatus = "refreshed";
-
-          logger.info(
-            "Profile retrieved with token refresh",
-            { userId: newPayload.userId },
-            { requestId },
-          );
-        } catch (refreshError) {
-          if (
-            refreshError instanceof AppError &&
-            refreshError.code === "INVALID_REFRESH_TOKEN"
-          ) {
-            logger.warn(
-              "Both access and refresh tokens are invalid/expired",
-              {},
-              { requestId },
-            );
-
-            throw new AppError(
-              "Both access and refresh tokens are expired. Please login again",
-              401,
-              "TOKENS_EXPIRED",
-            );
-          }
-          throw refreshError;
-        }
-      } else {
-        throw tokenError;
-      }
-    }
-
+    // TODO: 型を定義する
     const responseData: any = {
       user,
       tokenStatus,
     };
 
-    if (newTokens) {
-      responseData.tokens = newTokens;
-    }
-
     res.status(200).json({
       success: true,
-      message: `User profile retrieved successfully${tokenStatus === "refreshed" ? " with token refresh" : ""}`,
+      message: "User profile retrieved successfully",
       data: responseData,
     });
   } catch (error) {

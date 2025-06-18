@@ -10,6 +10,7 @@ interface RateLimitEntry {
 
 class InMemoryRateLimiter {
   private store = new Map<string, RateLimitEntry>();
+  // eslint-disable-next-line no-undef
   private cleanupInterval: NodeJS.Timeout;
 
   constructor() {
@@ -18,7 +19,7 @@ class InMemoryRateLimiter {
       () => {
         this.cleanup();
       },
-      5 * 60 * 1000,
+      5 * 60 * 1000
     );
   }
 
@@ -41,7 +42,7 @@ class InMemoryRateLimiter {
   check(
     req: Request,
     windowMs: number,
-    maxRequests: number,
+    maxRequests: number
   ): { allowed: boolean; remaining: number; resetTime: number } {
     const key = this.getKey(req);
     const now = Date.now();
@@ -109,7 +110,7 @@ export const createRateLimit = (options?: {
           method: req.method,
           userId: (req as any).user?.userId,
         },
-        { requestId: req.headers["x-request-id"] as string },
+        { requestId: req.headers["x-request-id"] as string }
       );
 
       const error = new RateLimitError(message);

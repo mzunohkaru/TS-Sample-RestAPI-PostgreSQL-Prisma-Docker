@@ -11,6 +11,6 @@ const RequestAuthHeaderSchema = z.object({
     }),
 });
 
-type RequestAuthHeaderSchema = z.infer<typeof RequestAuthHeaderSchema>;
+type RequestAuthHeaderType = z.infer<typeof RequestAuthHeaderSchema>;
 
-export { RequestAuthHeaderSchema };
+export { RequestAuthHeaderSchema, RequestAuthHeaderType };

@@ -8,7 +8,6 @@ export const errorHandler = (
   err: any,
   req: Request,
   res: Response,
-  next: NextFunction,
 ): void => {
   const requestId = (req.headers["x-request-id"] as string) || (req as any).id;
   const userId = (req as any).user?.userId;

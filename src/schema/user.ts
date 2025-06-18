@@ -7,7 +7,7 @@ const passwordSchema = z
   .max(128, "Password must not exceed 128 characters")
   .regex(
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/,
-    "Password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character",
+    "Password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character"
   );
 
 // Email validation schema
@@ -25,7 +25,7 @@ const nameSchema = z
   .max(100, "Name must not exceed 100 characters")
   .regex(
     /^[a-zA-Z\s'-]+$/,
-    "Name can only contain letters, spaces, hyphens, and apostrophes",
+    "Name can only contain letters, spaces, hyphens, and apostrophes"
   )
   .transform((name) => name.trim());
 
@@ -60,6 +60,15 @@ export const ResetPasswordSchema = z.object({
   newPassword: passwordSchema,
 });
 
+// Auth token schemas
+export const RefreshTokenSchema = z.object({
+  refreshToken: z.string().min(1, "Refresh token is required"),
+});
+
+export const VerifyTokenSchema = z.object({
+  refreshToken: z.string().optional(),
+});
+
 // Query parameter schemas
 export const GetUsersQuerySchema = z.object({
   page: z.coerce.number().min(1).default(1),
@@ -74,11 +83,13 @@ export const GetUserParamsSchema = z.object({
 });
 
 // Type exports
-export type CreateUserSchema = z.infer<typeof CreateUserSchema>;
-export type UpdateUserSchema = z.infer<typeof UpdateUserSchema>;
-export type LoginUserSchema = z.infer<typeof LoginUserSchema>;
-export type ChangePasswordSchema = z.infer<typeof ChangePasswordSchema>;
-export type ForgotPasswordSchema = z.infer<typeof ForgotPasswordSchema>;
-export type ResetPasswordSchema = z.infer<typeof ResetPasswordSchema>;
-export type GetUsersQuerySchema = z.infer<typeof GetUsersQuerySchema>;
-export type GetUserParamsSchema = z.infer<typeof GetUserParamsSchema>;
+export type CreateUserType = z.infer<typeof CreateUserSchema>;
+export type UpdateUserType = z.infer<typeof UpdateUserSchema>;
+export type LoginUserType = z.infer<typeof LoginUserSchema>;
+export type ChangePasswordType = z.infer<typeof ChangePasswordSchema>;
+export type ForgotPasswordType = z.infer<typeof ForgotPasswordSchema>;
+export type ResetPasswordType = z.infer<typeof ResetPasswordSchema>;
+export type RefreshTokenType = z.infer<typeof RefreshTokenSchema>;
+export type VerifyTokenType = z.infer<typeof VerifyTokenSchema>;
+export type GetUsersQueryType = z.infer<typeof GetUsersQuerySchema>;
+export type GetUserParamsType = z.infer<typeof GetUserParamsSchema>;
