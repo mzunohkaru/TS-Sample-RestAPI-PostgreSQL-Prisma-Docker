@@ -76,7 +76,7 @@ class Logger {
     context?: { requestId?: string; userId?: string },
   ): void {
     if (this.shouldLog(LogLevel.ERROR)) {
-      this.output(this.formatLog("error", message, meta, context));
+      this.output(this.formatLog("😱error", message, meta, context));
     }
   }
 
@@ -86,7 +86,7 @@ class Logger {
     context?: { requestId?: string; userId?: string },
   ): void {
     if (this.shouldLog(LogLevel.WARN)) {
-      this.output(this.formatLog("warn", message, meta, context));
+      this.output(this.formatLog("😇warn", message, meta, context));
     }
   }
 
@@ -96,7 +96,7 @@ class Logger {
     context?: { requestId?: string; userId?: string },
   ): void {
     if (this.shouldLog(LogLevel.INFO)) {
-      this.output(this.formatLog("info", message, meta, context));
+      this.output(this.formatLog("😁info", message, meta, context));
     }
   }
 
@@ -106,7 +106,7 @@ class Logger {
     context?: { requestId?: string; userId?: string },
   ): void {
     if (this.shouldLog(LogLevel.DEBUG)) {
-      this.output(this.formatLog("debug", message, meta, context));
+      this.output(this.formatLog("😎debug", message, meta, context));
     }
   }
 
