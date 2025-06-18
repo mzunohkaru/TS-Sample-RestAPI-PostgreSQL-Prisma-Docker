@@ -50,7 +50,7 @@ export const errorHandler = (error: Error, req: Request, res: Response) => {
       ip: req.ip,
       userAgent: req.headers["user-agent"],
     },
-    { requestId },
+    { requestId }
   );
 
   // Handle different error types
@@ -69,7 +69,7 @@ export const errorHandler = (error: Error, req: Request, res: Response) => {
         statusCode,
         details,
       },
-      { requestId },
+      { requestId }
     );
   } else if (error instanceof ZodError) {
     // Zod validation errors
@@ -84,7 +84,7 @@ export const errorHandler = (error: Error, req: Request, res: Response) => {
         code,
         validation,
       },
-      { requestId },
+      { requestId }
     );
   } else if (error instanceof Prisma.PrismaClientKnownRequestError) {
     // Prisma database errors
@@ -92,48 +92,49 @@ export const errorHandler = (error: Error, req: Request, res: Response) => {
     code = "DATABASE_ERROR";
 
     switch (error.code) {
-      case "P2002":
-        // Unique constraint violation
-        statusCode = 409;
-        message = "Resource already exists";
-        code = "UNIQUE_CONSTRAINT_VIOLATION";
-        details = {
-          fields: error.meta?.target,
-          constraint: "unique",
-        };
-        break;
-
-      case "P2025":
-        // Record not found
-        statusCode = 404;
-        message = "Resource not found";
-        code = "RECORD_NOT_FOUND";
-        break;
-
-      case "P2003":
-        // Foreign key constraint violation
-        statusCode = 400;
-        message = "Invalid reference to related resource";
-        code = "FOREIGN_KEY_CONSTRAINT_VIOLATION";
-        details = {
-          field: error.meta?.field_name,
-          constraint: "foreign_key",
-        };
-        break;
-
-      case "P2014":
-        // Required relation violation
-        statusCode = 400;
-        message = "Invalid data: missing required relation";
-        code = "REQUIRED_RELATION_VIOLATION";
-        break;
-
-      default:
-        message = "Database operation failed";
-        details = {
-          code: error.code,
-          meta: error.meta,
-        };
+    case "P2002": {
+      // Unique constraint violation
+      statusCode = 409;
+      message = "Resource already exists";
+      code = "UNIQUE_CONSTRAINT_VIOLATION";
+      details = {
+        fields: error.meta?.target,
+        constraint: "unique",
+      };
+      break;
+    }
+    case "P2025": {
+      // Record not found
+      statusCode = 404;
+      message = "Resource not found";
+      code = "RECORD_NOT_FOUND";
+      break;
+    }
+    case "P2003": {
+      // Foreign key constraint violation
+      statusCode = 400;
+      message = "Invalid reference to related resource";
+      code = "FOREIGN_KEY_CONSTRAINT_VIOLATION";
+      details = {
+        field: error.meta?.field_name,
+        constraint: "foreign_key",
+      };
+      break;
+    }
+    case "P2014": {
+      // Required relation violation
+      statusCode = 400;
+      message = "Invalid data: missing required relation";
+      code = "REQUIRED_RELATION_VIOLATION";
+      break;
+    }
+    default:
+      message = "Database operation failed";
+      details = {
+        code: error.code,
+        meta: error.meta,
+      };
+      break;
     }
 
     logger.error(
@@ -144,7 +145,7 @@ export const errorHandler = (error: Error, req: Request, res: Response) => {
         message,
         meta: error.meta,
       },
-      { requestId },
+      { requestId }
     );
   } else if (error instanceof Prisma.PrismaClientUnknownRequestError) {
     // Unknown Prisma errors
@@ -158,7 +159,7 @@ export const errorHandler = (error: Error, req: Request, res: Response) => {
         code,
         message: error.message,
       },
-      { requestId },
+      { requestId }
     );
   } else if (error instanceof Prisma.PrismaClientRustPanicError) {
     // Prisma engine panic
@@ -172,7 +173,7 @@ export const errorHandler = (error: Error, req: Request, res: Response) => {
         code,
         message: error.message,
       },
-      { requestId },
+      { requestId }
     );
   } else if (error instanceof Prisma.PrismaClientInitializationError) {
     // Prisma initialization error
@@ -186,7 +187,7 @@ export const errorHandler = (error: Error, req: Request, res: Response) => {
         code,
         message: error.message,
       },
-      { requestId },
+      { requestId }
     );
   } else if (error instanceof Prisma.PrismaClientValidationError) {
     // Prisma validation error
@@ -200,7 +201,7 @@ export const errorHandler = (error: Error, req: Request, res: Response) => {
         code,
         message: error.message,
       },
-      { requestId },
+      { requestId }
     );
   } else if (error.name === "JsonWebTokenError") {
     // JWT errors
@@ -214,7 +215,7 @@ export const errorHandler = (error: Error, req: Request, res: Response) => {
         code,
         message: error.message,
       },
-      { requestId },
+      { requestId }
     );
   } else if (error.name === "TokenExpiredError") {
     // JWT expiration
@@ -228,7 +229,7 @@ export const errorHandler = (error: Error, req: Request, res: Response) => {
         code,
         message: error.message,
       },
-      { requestId },
+      { requestId }
     );
   } else if (error.name === "SyntaxError" && error.message.includes("JSON")) {
     // JSON parsing errors
@@ -242,7 +243,7 @@ export const errorHandler = (error: Error, req: Request, res: Response) => {
         code,
         message: error.message,
       },
-      { requestId },
+      { requestId }
     );
   } else {
     // Unknown errors
@@ -253,7 +254,7 @@ export const errorHandler = (error: Error, req: Request, res: Response) => {
         message: error.message,
         stack: error.stack,
       },
-      { requestId },
+      { requestId }
     );
   }
 
@@ -295,7 +296,7 @@ export const errorHandler = (error: Error, req: Request, res: Response) => {
 export const notFoundHandler = (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   const requestId = (req.headers["x-request-id"] as string) || "unknown";
 
@@ -307,7 +308,7 @@ export const notFoundHandler = (
       ip: req.ip,
       userAgent: req.headers["user-agent"],
     },
-    { requestId },
+    { requestId }
   );
 
   const error = new NotFoundError(`Route ${req.method} ${req.path} not found`);
@@ -344,7 +345,7 @@ export const setupGlobalErrorHandlers = () => {
       setTimeout(() => {
         process.exit(1);
       }, 1000);
-    },
+    }
   );
 
   process.on("SIGTERM", () => {
