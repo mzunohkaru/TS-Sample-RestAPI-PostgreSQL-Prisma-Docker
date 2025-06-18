@@ -7,15 +7,12 @@ import {
   RefreshTokenSchema,
   VerifyTokenSchema,
 } from "../schema/user";
-import {
-  CreatePostSchema,
-  UpdatePostSchema,
-} from "../schema/post";
+import { CreatePostSchema, UpdatePostSchema } from "../schema/post";
 
 export const vRequestHeader = (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const result = RequestAuthHeaderSchema.safeParse(req.headers);
   if (!result.success) {
@@ -46,7 +43,7 @@ export const vLogin = (req: Request, res: Response, next: NextFunction) => {
 export const vRefreshToken = (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const result = RefreshTokenSchema.safeParse(req.body);
   if (!result.success) {
@@ -59,7 +56,7 @@ export const vRefreshToken = (
 export const vVerifyToken = (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const result = VerifyTokenSchema.safeParse(req.body);
   if (!result.success) {
@@ -78,7 +75,11 @@ export const vUpdate = (req: Request, res: Response, next: NextFunction) => {
   return next();
 };
 
-export const vCreatePost = (req: Request, res: Response, next: NextFunction) => {
+export const vCreatePost = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   const result = CreatePostSchema.safeParse(req.body);
   if (!result.success) {
     res.status(422).json({ errors: result.error.flatten() });
@@ -87,7 +88,11 @@ export const vCreatePost = (req: Request, res: Response, next: NextFunction) => 
   next();
 };
 
-export const vUpdatePost = (req: Request, res: Response, next: NextFunction) => {
+export const vUpdatePost = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   const result = UpdatePostSchema.safeParse(req.body);
   if (!result.success) {
     res.status(422).json({ errors: result.error.flatten() });

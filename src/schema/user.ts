@@ -7,7 +7,7 @@ const passwordSchema = z
   .max(128, "Password must not exceed 128 characters")
   .regex(
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/,
-    "Password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character"
+    "Password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character",
   );
 
 // Email validation schema
@@ -25,7 +25,7 @@ const nameSchema = z
   .max(100, "Name must not exceed 100 characters")
   .regex(
     /^[a-zA-Z\s'-]+$/,
-    "Name can only contain letters, spaces, hyphens, and apostrophes"
+    "Name can only contain letters, spaces, hyphens, and apostrophes",
   )
   .transform((name) => name.trim());
 

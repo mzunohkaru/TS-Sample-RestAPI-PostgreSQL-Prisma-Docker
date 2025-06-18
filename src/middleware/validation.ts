@@ -128,7 +128,7 @@ export const validateUserRequest = (
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       const requestId = req.headers["x-request-id"] as string;
-      const errors: Record<string, any> = {};
+      const errors: Record<string, unknown> = {};
 
       logger.debug(
         "Comprehensive validation started",

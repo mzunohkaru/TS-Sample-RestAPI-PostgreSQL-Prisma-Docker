@@ -19,7 +19,7 @@ class InMemoryRateLimiter {
       () => {
         this.cleanup();
       },
-      5 * 60 * 1000
+      5 * 60 * 1000,
     );
   }
 
@@ -34,7 +34,9 @@ class InMemoryRateLimiter {
 
   private getKey(req: Request): string {
     // Use IP address and user ID (if authenticated) for more granular rate limiting
-    const userId = (req as any).user?.userId || "anonymous";
+    const userId =
+      (req as Request & { user?: { userId: string } }).user?.userId ||
+      "anonymous";
     const ip = req.ip || req.socket.remoteAddress || "unknown";
     return `${ip}:${userId}`;
   }
@@ -42,7 +44,7 @@ class InMemoryRateLimiter {
   check(
     req: Request,
     windowMs: number,
-    maxRequests: number
+    maxRequests: number,
   ): { allowed: boolean; remaining: number; resetTime: number } {
     const key = this.getKey(req);
     const now = Date.now();
@@ -108,9 +110,9 @@ export const createRateLimit = (options?: {
           userAgent: req.headers["user-agent"],
           path: req.path,
           method: req.method,
-          userId: (req as any).user?.userId,
+          userId: (req as Request & { user?: { userId: string } }).user?.userId,
         },
-        { requestId: req.headers["x-request-id"] as string }
+        { requestId: req.headers["x-request-id"] as string },
       );
 
       const error = new RateLimitError(message);

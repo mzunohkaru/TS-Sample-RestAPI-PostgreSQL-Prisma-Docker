@@ -28,7 +28,7 @@ export const requestLogger = (
       url: req.url,
       userAgent: req.headers["user-agent"],
       ip: req.ip,
-      userId: (req as any).user?.userId,
+      userId: (req as Request & { user?: { userId: string } }).user?.userId,
     },
     { requestId },
   );

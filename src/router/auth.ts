@@ -1,4 +1,5 @@
 import express from "express";
+import { RequestHandler } from "express";
 import {
   login,
   refreshToken,
@@ -29,8 +30,19 @@ router.post("/refresh", strictRateLimit, vRefreshToken, refreshToken);
 router.post("/verify", authRateLimit, vVerifyToken, verifyToken);
 
 // Protected auth endpoints with authentication middleware
-router.post("/logout", vRequestHeader, authenticate, logout as any);
+router.post(
+  "/logout",
+  vRequestHeader,
+  authenticate,
+  logout as unknown as RequestHandler,
+);
 
-router.get("/me", vRequestHeader, authenticate, generalRateLimit, me as any);
+router.get(
+  "/me",
+  vRequestHeader,
+  authenticate,
+  generalRateLimit,
+  me as unknown as RequestHandler,
+);
 
 export default router;

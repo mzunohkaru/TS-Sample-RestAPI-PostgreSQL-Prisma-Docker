@@ -200,12 +200,17 @@ export const includeRefreshedTokens = (
   if (authenticatedReq.tokenRefreshed && authenticatedReq.newTokens) {
     // Override json method to include new tokens in response
     const originalJson = res.json.bind(res);
-    res.json = function (body: any) {
+    res.json = function (body: Record<string, unknown>) {
       if (body && typeof body === "object" && body.success) {
-        body.data = body.data || {};
-        body.data.tokens = authenticatedReq.newTokens;
-        body.meta = body.meta || {};
-        body.meta.tokenRefreshed = true;
+        const typedBody = body as {
+          data?: Record<string, unknown>;
+          meta?: Record<string, unknown>;
+        };
+        typedBody.data = typedBody.data || {};
+        (typedBody.data as Record<string, unknown>).tokens =
+          authenticatedReq.newTokens;
+        typedBody.meta = typedBody.meta || {};
+        (typedBody.meta as Record<string, unknown>).tokenRefreshed = true;
       }
       return originalJson(body);
     };

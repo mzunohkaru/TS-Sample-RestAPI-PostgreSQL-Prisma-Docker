@@ -2,10 +2,7 @@ import { Request, Response } from "express";
 
 import { prismaClient } from "../../utils/db";
 
-export const getPost = async (
-  req: Request,
-  res: Response,
-) => {
+export const getPost = async (req: Request, res: Response) => {
   try {
     const posts = await prismaClient.post.findMany();
     res.json(posts);
@@ -14,10 +11,7 @@ export const getPost = async (
   }
 };
 
-export const getPostSummary = async (
-  req: Request,
-  res: Response,
-) => {
+export const getPostSummary = async (req: Request, res: Response) => {
   try {
     const posts = await prismaClient.user_post_summary.findMany();
     res.json(posts);

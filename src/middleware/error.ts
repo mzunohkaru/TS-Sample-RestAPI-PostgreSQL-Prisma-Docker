@@ -5,12 +5,18 @@ import { config } from "../config/env";
 import { ZodError } from "zod";
 
 export const errorHandler = (
-  err: any,
+  err: Error & {
+    code?: string;
+    statusCode?: number;
+    meta?: Record<string, unknown>;
+  },
   req: Request,
   res: Response,
 ): void => {
-  const requestId = (req.headers["x-request-id"] as string) || (req as any).id;
-  const userId = (req as any).user?.userId;
+  const requestId =
+    (req.headers["x-request-id"] as string) ||
+    (req as Request & { id?: string }).id;
+  const userId = (req as Request & { user?: { userId: string } }).user?.userId;
 
   // Handle Zod validation errors
   if (err instanceof ZodError) {
@@ -188,7 +194,9 @@ export const errorHandler = (
 
 // 404 handler for unmatched routes
 export const notFoundHandler = (req: Request, res: Response): void => {
-  const requestId = (req.headers["x-request-id"] as string) || (req as any).id;
+  const requestId =
+    (req.headers["x-request-id"] as string) ||
+    (req as Request & { id?: string }).id;
 
   logger.warn(
     "Route not found",
@@ -209,7 +217,9 @@ export const notFoundHandler = (req: Request, res: Response): void => {
 };
 
 // Async error wrapper
-export const asyncHandler = (fn: Function) => {
+export const asyncHandler = (
+  fn: (req: Request, res: Response, next: NextFunction) => Promise<void>,
+) => {
   return (req: Request, res: Response, next: NextFunction) => {
     Promise.resolve(fn(req, res, next)).catch(next);
   };

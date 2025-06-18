@@ -2,6 +2,7 @@ import { Response, NextFunction } from "express";
 import { prismaClient } from "../../utils/db";
 import { AppError } from "../../utils/error";
 import { logger } from "../../utils/logger";
+import { CreatePostSchema } from "../../schema/post";
 import { AuthenticatedRequest } from "../../middleware/auth";
 
 /**
@@ -12,7 +13,7 @@ import { AuthenticatedRequest } from "../../middleware/auth";
 export async function createPost(
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> {
   try {
     const startTime = Date.now();
@@ -30,17 +31,37 @@ export async function createPost(
         ip: req.ip,
         userAgent: req.headers["user-agent"],
       },
-      { requestId }
+      { requestId },
     );
 
-    // Validation is handled by middleware (vCreatePost)
-    const { title, content } = req.body;
+    // Validate request body
+    const validationResult = CreatePostSchema.safeParse(req.body);
+    if (!validationResult.success) {
+      logger.warn(
+        "Invalid post creation data",
+        {
+          errors: validationResult.error.flatten(),
+          userId,
+          ip: req.ip,
+        },
+        { requestId },
+      );
+
+      throw new AppError(
+        "Invalid post data",
+        400,
+        "INVALID_POST_DATA",
+        validationResult.error.flatten().fieldErrors,
+      );
+    }
+
+    const postData = validationResult.data;
 
     // Create post in database
     const post = await prismaClient.post.create({
       data: {
-        title,
-        content,
+        title: postData.title,
+        content: postData.content,
         userId: userId,
       },
       include: {
@@ -64,7 +85,7 @@ export async function createPost(
         title: post.title,
         duration: `${duration}ms`,
       },
-      { requestId }
+      { requestId },
     );
 
     res.status(201).json({
@@ -87,7 +108,7 @@ export async function createPost(
         userId: req.user?.userId,
         ip: req.ip,
       },
-      { requestId: req.headers["x-request-id"] as string }
+      { requestId: req.headers["x-request-id"] as string },
     );
 
     next(error);

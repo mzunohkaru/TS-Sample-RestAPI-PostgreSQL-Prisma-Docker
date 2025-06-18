@@ -14,7 +14,7 @@ const authService = new AuthService();
 export const login = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> => {
   try {
     const { email, password } = req.body;
@@ -27,7 +27,7 @@ export const login = async (
         userId: result.user.id,
         email: result.user.email,
       },
-      { requestId: req.headers["x-request-id"] as string }
+      { requestId: req.headers["x-request-id"] as string },
     );
 
     res.status(200).json({
@@ -51,7 +51,7 @@ export const login = async (
 export const refreshToken = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> => {
   try {
     const { refreshToken } = req.body;
@@ -61,7 +61,7 @@ export const refreshToken = async (
     logger.info(
       "Token refreshed successfully",
       {},
-      { requestId: req.headers["x-request-id"] as string }
+      { requestId: req.headers["x-request-id"] as string },
     );
 
     res.status(200).json({
@@ -82,7 +82,7 @@ export const refreshToken = async (
 export const verifyToken = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> => {
   try {
     const requestId = req.headers["x-request-id"] as string;
@@ -92,12 +92,12 @@ export const verifyToken = async (
       throw new AppError(
         "Access token is required",
         401,
-        "ACCESS_TOKEN_REQUIRED"
+        "ACCESS_TOKEN_REQUIRED",
       );
     }
 
     let accessToken: string;
-    let newTokens: any = null;
+    let newTokens: { accessToken: string; refreshToken: string } | null = null;
 
     try {
       accessToken = authService.extractTokenFromHeader(authHeader);
@@ -106,7 +106,7 @@ export const verifyToken = async (
       logger.info(
         "Access token verified successfully",
         { userId: payload.userId },
-        { requestId }
+        { requestId },
       );
 
       res.status(200).json({
@@ -132,7 +132,7 @@ export const verifyToken = async (
           throw new AppError(
             "Access token expired and no refresh token provided",
             401,
-            "TOKEN_EXPIRED_NO_REFRESH"
+            "TOKEN_EXPIRED_NO_REFRESH",
           );
         }
 
@@ -142,13 +142,13 @@ export const verifyToken = async (
 
           // 新しいアクセストークンを検証してユーザー情報を取得
           const newPayload = authService.verifyAccessToken(
-            newTokens.accessToken
+            newTokens.accessToken,
           );
 
           logger.info(
             "Token automatically refreshed due to expiration",
             { userId: newPayload.userId },
-            { requestId }
+            { requestId },
           );
 
           res.status(200).json({
@@ -171,13 +171,13 @@ export const verifyToken = async (
             logger.warn(
               "Both access and refresh tokens are invalid/expired",
               {},
-              { requestId }
+              { requestId },
             );
 
             throw new AppError(
               "Both access and refresh tokens are expired. Please login again",
               401,
-              "TOKENS_EXPIRED"
+              "TOKENS_EXPIRED",
             );
           }
           throw refreshError;
@@ -199,7 +199,7 @@ export const verifyToken = async (
 export const logout = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> => {
   try {
     const requestId = req.headers["x-request-id"] as string;
@@ -225,7 +225,7 @@ export const logout = async (
 export const me = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> => {
   try {
     const requestId = req.headers["x-request-id"] as string;
@@ -238,11 +238,13 @@ export const me = async (
     logger.info(
       "User profile retrieved successfully",
       { userId: user.userId },
-      { requestId }
+      { requestId },
     );
 
-    // TODO: 型を定義する
-    const responseData: any = {
+    const responseData: {
+      user: { userId: string; email: string };
+      tokenStatus: string;
+    } = {
       user,
       tokenStatus,
     };

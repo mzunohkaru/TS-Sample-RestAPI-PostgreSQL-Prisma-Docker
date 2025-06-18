@@ -2,13 +2,13 @@ export class AppError extends Error {
   public statusCode: number;
   public isOperational: boolean;
   public code?: string;
-  public details?: any;
+  public details?: Record<string, unknown>;
 
   constructor(
     message: string,
     statusCode: number,
     code?: string,
-    details?: any,
+    details?: Record<string, unknown>,
   ) {
     super(message);
     this.statusCode = statusCode;
@@ -21,7 +21,7 @@ export class AppError extends Error {
 }
 
 export class ValidationError extends AppError {
-  constructor(message: string, details?: any) {
+  constructor(message: string, details?: Record<string, unknown>) {
     super(message, 400, "VALIDATION_ERROR", details);
   }
 }

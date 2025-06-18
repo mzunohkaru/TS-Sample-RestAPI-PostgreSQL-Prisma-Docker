@@ -11,7 +11,7 @@ interface LogEntry {
   timestamp: string;
   level: string;
   message: string;
-  meta?: any;
+  meta?: Record<string, unknown>;
   requestId?: string;
   userId?: string;
 }
@@ -38,7 +38,7 @@ class Logger {
   private formatLog(
     level: string,
     message: string,
-    meta?: any,
+    meta?: Record<string, unknown>,
     context?: { requestId?: string; userId?: string },
   ): LogEntry {
     return {
@@ -72,7 +72,7 @@ class Logger {
 
   error(
     message: string,
-    meta?: any,
+    meta?: Record<string, unknown>,
     context?: { requestId?: string; userId?: string },
   ): void {
     if (this.shouldLog(LogLevel.ERROR)) {
@@ -82,7 +82,7 @@ class Logger {
 
   warn(
     message: string,
-    meta?: any,
+    meta?: Record<string, unknown>,
     context?: { requestId?: string; userId?: string },
   ): void {
     if (this.shouldLog(LogLevel.WARN)) {
@@ -92,7 +92,7 @@ class Logger {
 
   info(
     message: string,
-    meta?: any,
+    meta?: Record<string, unknown>,
     context?: { requestId?: string; userId?: string },
   ): void {
     if (this.shouldLog(LogLevel.INFO)) {
@@ -102,7 +102,7 @@ class Logger {
 
   debug(
     message: string,
-    meta?: any,
+    meta?: Record<string, unknown>,
     context?: { requestId?: string; userId?: string },
   ): void {
     if (this.shouldLog(LogLevel.DEBUG)) {
@@ -113,7 +113,7 @@ class Logger {
   // Security audit logging
   security(
     event: string,
-    details: any,
+    details: Record<string, unknown>,
     context?: { requestId?: string; userId?: string },
   ): void {
     this.warn(`SECURITY: ${event}`, details, context);

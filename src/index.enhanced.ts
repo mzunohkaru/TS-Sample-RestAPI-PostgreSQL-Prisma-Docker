@@ -113,7 +113,7 @@ app.use(performanceMonitor);
 app.use(
   express.json({
     limit: "10mb",
-    verify: (req, res, buf, encoding) => {
+    verify: (req, res, buf) => {
       // JSON bomb protection
       try {
         JSON.parse(buf.toString());
@@ -228,7 +228,7 @@ app.use(errorHandler);
 
 // Graceful shutdown
 const server = app.listen(port, () => {
-  logger.info(`🚀 Enhanced Express Server started`, {
+  logger.info("🚀 Enhanced Express Server started", {
     port,
     environment: config.env,
     nodeVersion: process.version,
