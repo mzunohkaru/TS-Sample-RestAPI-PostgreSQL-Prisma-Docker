@@ -14,7 +14,7 @@ const userService = new UserService();
 export async function createUser(
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) {
   try {
     const startTime = Date.now();
@@ -26,7 +26,7 @@ export async function createUser(
         ip: req.ip,
         userAgent: req.headers["user-agent"],
       },
-      { requestId }
+      { requestId },
     );
 
     // Validate request body
@@ -38,14 +38,14 @@ export async function createUser(
           errors: validationResult.error.flatten(),
           ip: req.ip,
         },
-        { requestId }
+        { requestId },
       );
 
       throw new AppError(
         "Invalid user data",
         400,
         "INVALID_USER_DATA",
-        validationResult.error.flatten().fieldErrors
+        validationResult.error.flatten().fieldErrors,
       );
     }
 
@@ -61,7 +61,7 @@ export async function createUser(
         email: user.email,
         duration: `${duration}ms`,
       },
-      { requestId }
+      { requestId },
     );
 
     res.status(201).json({
@@ -83,7 +83,7 @@ export async function createUser(
         duration: `${duration}ms`,
         ip: req.ip,
       },
-      { requestId: req.headers["x-request-id"] as string }
+      { requestId: req.headers["x-request-id"] as string },
     );
 
     next(error);
@@ -98,7 +98,7 @@ export async function createUser(
 export async function upsertUser(
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) {
   try {
     const startTime = Date.now();
@@ -110,7 +110,7 @@ export async function upsertUser(
         userId: req.params.id,
         ip: req.ip,
       },
-      { requestId }
+      { requestId },
     );
 
     // Validate parameters
@@ -122,14 +122,14 @@ export async function upsertUser(
           userId: req.params.id,
           errors: paramsValidation.error.flatten(),
         },
-        { requestId }
+        { requestId },
       );
 
       throw new AppError(
         "Invalid user ID format",
         400,
         "INVALID_USER_ID",
-        paramsValidation.error.flatten().fieldErrors
+        paramsValidation.error.flatten().fieldErrors,
       );
     }
 
@@ -142,14 +142,14 @@ export async function upsertUser(
           userId: req.params.id,
           errors: bodyValidation.error.flatten(),
         },
-        { requestId }
+        { requestId },
       );
 
       throw new AppError(
         "Invalid user data",
         400,
         "INVALID_USER_DATA",
-        bodyValidation.error.flatten().fieldErrors
+        bodyValidation.error.flatten().fieldErrors,
       );
     }
 
@@ -172,7 +172,7 @@ export async function upsertUser(
       logger.info(
         "User created via upsert",
         { userId: user.id },
-        { requestId }
+        { requestId },
       );
     }
 
@@ -185,7 +185,7 @@ export async function upsertUser(
         operation: isCreated ? "created" : "updated",
         duration: `${duration}ms`,
       },
-      { requestId }
+      { requestId },
     );
 
     res.status(isCreated ? 201 : 200).json({
@@ -208,7 +208,7 @@ export async function upsertUser(
         error: error instanceof Error ? error.message : "Unknown error",
         duration: `${duration}ms`,
       },
-      { requestId: req.headers["x-request-id"] as string }
+      { requestId: req.headers["x-request-id"] as string },
     );
 
     next(error);
