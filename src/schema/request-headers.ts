@@ -5,7 +5,7 @@ const RequestAuthHeaderSchema = z.object({
   authorization: z
     .string()
     .min(1)
-    .refine((val) => val.includes("bearer"), {
+    .refine((val) => val.includes("Bearer"), {
       message:
         "authorizationヘッダーには'Bearer'が含まれている必要があります。",
     }),

@@ -16,14 +16,12 @@
 ```
 src/
 ├── config/         # 環境設定・構成管理
-├── express/        # Express.js 実装 (メイン)
-│   ├── controllers/  # リクエスト処理
-│   ├── middleware/   # 認証・ログ・エラー処理
-│   ├── router/       # ルーティング
-│   └── services/     # ビジネスロジック
+├── controller/     # リクエスト処理
+├── middleware/     # 認証・ログ・エラー処理
+├── router/         # ルーティング
+├── services/       # ビジネスロジック
 ├── schema/         # Zod バリデーションスキーマ
 └── utils/          # 共通ユーティリティ
-```
 
 ## 開発ルール
 
