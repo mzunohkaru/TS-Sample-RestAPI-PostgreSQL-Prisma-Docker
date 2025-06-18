@@ -5,7 +5,7 @@ import { prismaClient } from "../../../utils/db";
 export const getPost = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const posts = await prismaClient.post.findMany();
@@ -18,7 +18,7 @@ export const getPost = async (
 export const getPostSummary = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const posts = await prismaClient.user_post_summary.findMany();

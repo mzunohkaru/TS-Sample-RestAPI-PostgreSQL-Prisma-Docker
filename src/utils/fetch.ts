@@ -5,7 +5,7 @@ export const instance = axios.create({
 });
 
 export const makeRequest = async <T>(
-  config: AxiosRequestConfig
+  config: AxiosRequestConfig,
 ): Promise<T> => {
   try {
     const response = await axios({
@@ -25,7 +25,7 @@ export const makeRequest = async <T>(
 export const getFetcher = <T, U>(
   url: string,
   params: U,
-  config: AxiosRequestConfig
+  config: AxiosRequestConfig,
 ): Promise<T> => {
   return makeRequest<T>({ ...{ method: "GET", url, params, ...config } });
 };
@@ -33,7 +33,7 @@ export const getFetcher = <T, U>(
 export const postFetcher = <T, U>(
   url: string,
   data: U,
-  config: AxiosRequestConfig
+  config: AxiosRequestConfig,
 ): Promise<T> => {
   return makeRequest<T>({ ...{ method: "POST", url, data, ...config } });
 };
@@ -41,7 +41,7 @@ export const postFetcher = <T, U>(
 export const putFetcher = <T, U>(
   url: string,
   data: U,
-  config: AxiosRequestConfig
+  config: AxiosRequestConfig,
 ): Promise<T> => {
   return makeRequest<T>({ ...{ method: "PUT", url, data, ...config } });
 };
@@ -49,8 +49,7 @@ export const putFetcher = <T, U>(
 export const deleteFetcher = <T, U>(
   url: string,
   data: U,
-  config: AxiosRequestConfig
+  config: AxiosRequestConfig,
 ): Promise<T> => {
   return makeRequest<T>({ ...{ method: "DELETE", url, data, ...config } });
 };
-

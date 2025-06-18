@@ -1,24 +1,32 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 // Password validation schema
-const passwordSchema = z.string()
-  .min(8, 'Password must be at least 8 characters long')
-  .max(128, 'Password must not exceed 128 characters')
-  .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/, 
-    'Password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character');
+const passwordSchema = z
+  .string()
+  .min(8, "Password must be at least 8 characters long")
+  .max(128, "Password must not exceed 128 characters")
+  .regex(
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/,
+    "Password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character",
+  );
 
 // Email validation schema
-const emailSchema = z.string()
-  .email('Invalid email address')
-  .max(255, 'Email must not exceed 255 characters')
+const emailSchema = z
+  .string()
+  .email("Invalid email address")
+  .max(255, "Email must not exceed 255 characters")
   .toLowerCase()
   .transform((email) => email.trim());
 
 // Name validation schema
-const nameSchema = z.string()
-  .min(1, 'Name is required')
-  .max(100, 'Name must not exceed 100 characters')
-  .regex(/^[a-zA-Z\s'-]+$/, 'Name can only contain letters, spaces, hyphens, and apostrophes')
+const nameSchema = z
+  .string()
+  .min(1, "Name is required")
+  .max(100, "Name must not exceed 100 characters")
+  .regex(
+    /^[a-zA-Z\s'-]+$/,
+    "Name can only contain letters, spaces, hyphens, and apostrophes",
+  )
   .transform((name) => name.trim());
 
 export const CreateUserSchema = z.object({
@@ -35,11 +43,11 @@ export const UpdateUserSchema = z.object({
 
 export const LoginUserSchema = z.object({
   email: emailSchema,
-  password: z.string().min(1, 'Password is required'),
+  password: z.string().min(1, "Password is required"),
 });
 
 export const ChangePasswordSchema = z.object({
-  currentPassword: z.string().min(1, 'Current password is required'),
+  currentPassword: z.string().min(1, "Current password is required"),
   newPassword: passwordSchema,
 });
 
@@ -48,7 +56,7 @@ export const ForgotPasswordSchema = z.object({
 });
 
 export const ResetPasswordSchema = z.object({
-  token: z.string().min(1, 'Reset token is required'),
+  token: z.string().min(1, "Reset token is required"),
   newPassword: passwordSchema,
 });
 
@@ -57,12 +65,12 @@ export const GetUsersQuerySchema = z.object({
   page: z.coerce.number().min(1).default(1),
   limit: z.coerce.number().min(1).max(100).default(10),
   search: z.string().optional(),
-  sortBy: z.enum(['name', 'email', 'createdAt']).default('createdAt'),
-  sortOrder: z.enum(['asc', 'desc']).default('desc'),
+  sortBy: z.enum(["name", "email", "createdAt"]).default("createdAt"),
+  sortOrder: z.enum(["asc", "desc"]).default("desc"),
 });
 
 export const GetUserParamsSchema = z.object({
-  id: z.string().uuid('Invalid user ID format'),
+  id: z.string().uuid("Invalid user ID format"),
 });
 
 // Type exports

@@ -9,7 +9,7 @@ import {
 export const vRequestHeader = (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const result = RequestAuthHeaderSchema.safeParse(req.headers);
   if (!result.success) {

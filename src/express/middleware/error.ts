@@ -8,7 +8,7 @@ export const errorHandler = (
   err: any,
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): void => {
   const requestId = (req.headers["x-request-id"] as string) || (req as any).id;
   const userId = (req as any).user?.userId;
@@ -27,7 +27,7 @@ export const errorHandler = (
         path: req.path,
         method: req.method,
       },
-      { requestId, userId }
+      { requestId, userId },
     );
 
     res.status(400).json({
@@ -51,7 +51,7 @@ export const errorHandler = (
         path: req.path,
         method: req.method,
       },
-      { requestId, userId }
+      { requestId, userId },
     );
 
     res.status(err.statusCode).json({
@@ -72,7 +72,7 @@ export const errorHandler = (
         path: req.path,
         method: req.method,
       },
-      { requestId, userId }
+      { requestId, userId },
     );
 
     res.status(401).json({
@@ -91,7 +91,7 @@ export const errorHandler = (
         path: req.path,
         method: req.method,
       },
-      { requestId, userId }
+      { requestId, userId },
     );
 
     res.status(401).json({
@@ -112,7 +112,7 @@ export const errorHandler = (
         path: req.path,
         method: req.method,
       },
-      { requestId, userId }
+      { requestId, userId },
     );
 
     res.status(409).json({
@@ -131,7 +131,7 @@ export const errorHandler = (
         path: req.path,
         method: req.method,
       },
-      { requestId, userId }
+      { requestId, userId },
     );
 
     res.status(404).json({
@@ -152,7 +152,7 @@ export const errorHandler = (
         path: req.path,
         method: req.method,
       },
-      { requestId, userId }
+      { requestId, userId },
     );
 
     res.status(500).json({
@@ -172,7 +172,7 @@ export const errorHandler = (
       path: req.path,
       method: req.method,
     },
-    { requestId, userId }
+    { requestId, userId },
   );
 
   res.status(500).json({
@@ -197,7 +197,7 @@ export const notFoundHandler = (req: Request, res: Response): void => {
       method: req.method,
       ip: req.ip,
     },
-    { requestId }
+    { requestId },
   );
 
   res.status(404).json({

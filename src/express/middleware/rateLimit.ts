@@ -14,9 +14,12 @@ class InMemoryRateLimiter {
 
   constructor() {
     // Clean up expired entries every 5 minutes
-    this.cleanupInterval = setInterval(() => {
-      this.cleanup();
-    }, 5 * 60 * 1000);
+    this.cleanupInterval = setInterval(
+      () => {
+        this.cleanup();
+      },
+      5 * 60 * 1000,
+    );
   }
 
   private cleanup(): void {
@@ -38,7 +41,7 @@ class InMemoryRateLimiter {
   check(
     req: Request,
     windowMs: number,
-    maxRequests: number
+    maxRequests: number,
   ): { allowed: boolean; remaining: number; resetTime: number } {
     const key = this.getKey(req);
     const now = Date.now();
@@ -106,7 +109,7 @@ export const createRateLimit = (options?: {
           method: req.method,
           userId: (req as any).user?.userId,
         },
-        { requestId: req.headers["x-request-id"] as string }
+        { requestId: req.headers["x-request-id"] as string },
       );
 
       const error = new RateLimitError(message);
@@ -139,18 +142,18 @@ export const createRateLimit = (options?: {
 // Predefined rate limiters for different endpoints
 export const authRateLimit = createRateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  maxRequests: 5, // 5 attempts per window
+  maxRequests: 500, // 500 attempts per window
   message: "Too many authentication attempts, please try again later",
 });
 
 export const generalRateLimit = createRateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  maxRequests: 100, // 100 requests per window
+  maxRequests: 1000, // 100 requests per window
 });
 
 export const strictRateLimit = createRateLimit({
   windowMs: 60 * 1000, // 1 minute
-  maxRequests: 10, // 10 requests per minute
+  maxRequests: 100, // 10 requests per minute
 });
 
 // Cleanup on process termination
