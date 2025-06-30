@@ -69,7 +69,7 @@ npm run docker:db:seed
 ### アプリケーション実行
 ```bash
 # 開発サーバー起動（ホットリロード）
-npm run dev:express
+npm run dev
 
 # ビルド
 npm run build
@@ -157,7 +157,7 @@ npm run docker:db:seed
 
 1. **機能開発**
    ```bash
-   npm run dev:express  # 開発サーバー起動
+   npm run dev  # 開発サーバー起動
    ```
 
 2. **コード品質チェック**

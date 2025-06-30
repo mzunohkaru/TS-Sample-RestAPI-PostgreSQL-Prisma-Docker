@@ -31,4 +31,4 @@ ENV TS_NODE_COMPILER_OPTIONS='{"module":"commonjs"}'
 EXPOSE 3000
 
 # For development, we'll use nodemon
-CMD ["npm", "run", "dev:express"]
+CMD ["npm", "run", "dev"]

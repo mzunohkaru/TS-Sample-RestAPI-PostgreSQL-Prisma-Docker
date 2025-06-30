@@ -31,7 +31,7 @@ src/
 npm run docker:up
 
 # 開発サーバー (Express.js)
-npm run dev:express
+npm run dev
 
 # データベース操作
 npm run db:generate  # Prisma Client 生成

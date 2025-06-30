@@ -43,26 +43,26 @@ services:
       - app-network
     security_opt:
       - no-new-privileges:true
-  app:
-    build: .
-    command: npm run dev:express
-    volumes:
-      - .:/app
-      - /app/node_modules
-      - /app/dist
-    ports:
-      - "3000:3000"
-    depends_on:
-      postgres:
-        condition: service_healthy
-    env_file:
-      - .env
-    environment:
-      - NODE_ENV=development
-      - DATABASE_URL=postgresql://myuser:mypassword@postgres:5432/mydb?schema=public
-    networks:
-      - app-network
-    restart: unless-stopped
+  # app:
+  #   build: .
+  #   command: npm run dev
+  #   volumes:
+  #     - .:/app
+  #     - /app/node_modules
+  #     - /app/dist
+  #   ports:
+  #     - "3000:3000"
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #   env_file:
+  #     - .env
+  #   environment:
+  #     - NODE_ENV=development
+  #     - DATABASE_URL=postgresql://myuser:mypassword@postgres:5432/mydb?schema=public
+  #   networks:
+  #     - app-network
+  #   restart: unless-stopped
 
 volumes:
   postgres-data:
@@ -71,6 +71,6 @@ volumes:
 networks:
   app-network:
     driver: bridge
-    ipam:
-      config:
-        - subnet: 172.20.0.0/16
+    # ipam:
+    #   config:
+    #     - subnet: 172.20.0.0/16
