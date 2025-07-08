@@ -5,7 +5,7 @@ import { AppError } from "../utils/error";
 import { logger } from "../utils/logger";
 import { CreateUserType, UpdateUserType } from "../schema/user";
 
-export interface PaginatedUsers {
+export type PaginatedUsers = {
   users: Omit<User, "password">[];
   pagination: {
     currentPage: number;
@@ -14,13 +14,13 @@ export interface PaginatedUsers {
     hasNext: boolean;
     hasPrev: boolean;
   };
-}
+};
 
-export interface UserFilters {
+export type UserFilters = {
   search?: string;
   sortBy?: "name" | "email" | "createdAt";
   sortOrder?: "asc" | "desc";
-}
+};
 
 export class UserService {
   async createUser(userData: CreateUserType): Promise<Omit<User, "password">> {
@@ -40,7 +40,7 @@ export class UserService {
         throw new AppError(
           "User with this email already exists",
           409,
-          "USER_ALREADY_EXISTS",
+          "USER_ALREADY_EXISTS"
         );
       }
 
@@ -80,7 +80,7 @@ export class UserService {
           throw new AppError(
             "User with this email already exists",
             409,
-            "USER_ALREADY_EXISTS",
+            "USER_ALREADY_EXISTS"
           );
         }
       }
@@ -96,7 +96,7 @@ export class UserService {
   async getUsersPaginated(
     page: number,
     limit: number,
-    filters: UserFilters = {},
+    filters: UserFilters = {}
   ): Promise<PaginatedUsers> {
     try {
       logger.debug("Fetching paginated users", { page, limit, filters });
@@ -213,7 +213,7 @@ export class UserService {
 
   async updateUser(
     id: string,
-    updateData: UpdateUserType,
+    updateData: UpdateUserType
   ): Promise<Omit<User, "password">> {
     try {
       logger.info("Updating user", {
@@ -250,7 +250,7 @@ export class UserService {
           throw new AppError(
             "Email already in use by another user",
             409,
-            "EMAIL_ALREADY_EXISTS",
+            "EMAIL_ALREADY_EXISTS"
           );
         }
       }
@@ -295,7 +295,7 @@ export class UserService {
           throw new AppError(
             "Email already in use by another user",
             409,
-            "EMAIL_ALREADY_EXISTS",
+            "EMAIL_ALREADY_EXISTS"
           );
         }
         if (error.code === "P2025") {
@@ -378,7 +378,7 @@ export class UserService {
 
   async validatePassword(
     email: string,
-    password: string,
+    password: string
   ): Promise<Omit<User, "password"> | null> {
     try {
       logger.debug("Validating user password", { email });
@@ -417,7 +417,7 @@ export class UserService {
       throw new AppError(
         "Authentication failed",
         500,
-        "AUTH_VALIDATION_FAILED",
+        "AUTH_VALIDATION_FAILED"
       );
     }
   }

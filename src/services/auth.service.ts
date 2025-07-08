@@ -4,17 +4,17 @@ import { UserService } from "./user.service";
 import { AppError } from "../utils/error";
 import { config } from "../config/env";
 
-export interface TokenPayload {
+export type TokenPayload = {
   userId: string;
   email: string;
   iat?: number;
   exp?: number;
-}
+};
 
-export interface AuthTokens {
+export type AuthTokens = {
   accessToken: string;
   refreshToken: string;
-}
+};
 
 export class AuthService {
   private userService: UserService;
@@ -25,7 +25,7 @@ export class AuthService {
 
   async login(
     email: string,
-    password: string,
+    password: string
   ): Promise<{
     user: Omit<User, "password">;
     tokens: AuthTokens;
@@ -45,7 +45,7 @@ export class AuthService {
     try {
       const decoded = jwt.verify(
         refreshToken,
-        config.jwt.refreshSecret,
+        config.jwt.refreshSecret
       ) as TokenPayload;
 
       const user = await this.userService.getUserById(decoded.userId);
@@ -60,7 +60,7 @@ export class AuthService {
         throw new AppError(
           "Invalid refresh token",
           401,
-          "INVALID_REFRESH_TOKEN",
+          "INVALID_REFRESH_TOKEN"
         );
       }
       throw error;
@@ -103,7 +103,7 @@ export class AuthService {
       throw new AppError(
         "Authorization header missing",
         401,
-        "AUTH_HEADER_MISSING",
+        "AUTH_HEADER_MISSING"
       );
     }
 
@@ -113,7 +113,7 @@ export class AuthService {
       throw new AppError(
         "Invalid authorization header format",
         401,
-        "INVALID_AUTH_HEADER",
+        "INVALID_AUTH_HEADER"
       );
     }
 
