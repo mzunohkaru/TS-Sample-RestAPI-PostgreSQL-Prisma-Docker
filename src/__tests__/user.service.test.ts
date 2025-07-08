@@ -38,7 +38,6 @@ import { AppError } from "../utils/error";
 import { prismaClient } from "../utils/db";
 import { hashPassword, comparePassword } from "../utils/hash";
 
-// Get mocked instances
 const mockPrismaClient = prismaClient as jest.Mocked<typeof prismaClient>;
 const mockHashPassword = hashPassword as jest.MockedFunction<
   typeof hashPassword
@@ -72,14 +71,14 @@ describe("UserService", () => {
     jest.clearAllMocks();
   });
 
-  describe("createUser", () => {
+  describe("ユーザー作成", () => {
     const userData = {
       name: "John Doe",
       email: "john@example.com",
       password: "password123",
     };
 
-    it("should create a new user successfully", async () => {
+    it("新しいユーザーを正常に作成するべき", async () => {
       (
         mockPrismaClient.user.findUnique as jest.MockedFunction<
           typeof prismaClient.user.findUnique
@@ -104,7 +103,7 @@ describe("UserService", () => {
       expect(result).toEqual(mockUserWithoutPassword);
     });
 
-    it("should throw AppError when user already exists", async () => {
+    it("ユーザーが既に存在する場合はAppErrorをスローするべき", async () => {
       (
         mockPrismaClient.user.findUnique as jest.MockedFunction<
           typeof prismaClient.user.findUnique
@@ -124,7 +123,7 @@ describe("UserService", () => {
       );
     });
 
-    it("should handle Prisma constraint violation (P2002)", async () => {
+    it("Prismaの制約違反(P2002)を処理するべき", async () => {
       (
         mockPrismaClient.user.findUnique as jest.MockedFunction<
           typeof prismaClient.user.findUnique
@@ -150,7 +149,7 @@ describe("UserService", () => {
       );
     });
 
-    it("should handle unexpected errors", async () => {
+    it("予期しないエラーを処理するべき", async () => {
       (
         mockPrismaClient.user.findUnique as jest.MockedFunction<
           typeof prismaClient.user.findUnique
@@ -172,7 +171,7 @@ describe("UserService", () => {
     });
   });
 
-  describe("getUsersPaginated", () => {
+  describe("ページネーションされたユーザー取得", () => {
     const mockUsers = [
       { ...mockUserWithoutPassword, posts: [] },
       {
@@ -183,7 +182,7 @@ describe("UserService", () => {
       },
     ];
 
-    it("should return paginated users with default parameters", async () => {
+    it("デフォルトのパラメータでページネーションされたユーザーを返すべき", async () => {
       (
         mockPrismaClient.user.findMany as jest.MockedFunction<
           typeof prismaClient.user.findMany
@@ -227,7 +226,7 @@ describe("UserService", () => {
       });
     });
 
-    it("should handle database errors", async () => {
+    it("データベースエラーを処理するべき", async () => {
       (
         mockPrismaClient.user.findMany as jest.MockedFunction<
           typeof prismaClient.user.findMany
@@ -243,7 +242,7 @@ describe("UserService", () => {
     });
   });
 
-  describe("getUserById", () => {
+  describe("IDでユーザー取得", () => {
     const mockUserWithPosts = {
       ...mockUserWithoutPassword,
       posts: [
@@ -257,7 +256,7 @@ describe("UserService", () => {
       ],
     };
 
-    it("should return user when found", async () => {
+    it("ユーザーが見つかった場合は返すべき", async () => {
       (
         mockPrismaClient.user.findUnique as jest.MockedFunction<
           typeof prismaClient.user.findUnique
@@ -288,7 +287,7 @@ describe("UserService", () => {
       expect(result).toEqual(mockUserWithPosts);
     });
 
-    it("should return null when user not found", async () => {
+    it("ユーザーが見つからない場合はnullを返すべき", async () => {
       (
         mockPrismaClient.user.findUnique as jest.MockedFunction<
           typeof prismaClient.user.findUnique
@@ -300,7 +299,7 @@ describe("UserService", () => {
       expect(result).toBeNull();
     });
 
-    it("should handle database errors", async () => {
+    it("データベースエラーを処理するべき", async () => {
       (
         mockPrismaClient.user.findUnique as jest.MockedFunction<
           typeof prismaClient.user.findUnique
@@ -314,13 +313,13 @@ describe("UserService", () => {
     });
   });
 
-  describe("updateUser", () => {
+  describe("ユーザー更新", () => {
     const updateData = {
       name: "John Updated",
       email: "john.updated@example.com",
     };
 
-    it("should update user successfully", async () => {
+    it("ユーザーを正常に更新するべき", async () => {
       (
         mockPrismaClient.user.findUnique as jest.MockedFunction<
           typeof prismaClient.user.findUnique
@@ -349,7 +348,7 @@ describe("UserService", () => {
       expect(result).toEqual({ ...mockUserWithoutPassword, ...updateData });
     });
 
-    it("should throw AppError when user not found", async () => {
+    it("ユーザーが見つからない場合はAppErrorをスローするべき", async () => {
       (
         mockPrismaClient.user.findUnique as jest.MockedFunction<
           typeof prismaClient.user.findUnique
@@ -364,7 +363,7 @@ describe("UserService", () => {
       ).rejects.toThrow("User not found");
     });
 
-    it("should throw AppError when email already exists", async () => {
+    it("メールが既に存在する場合はAppErrorをスローするべき", async () => {
       (
         mockPrismaClient.user.findUnique as jest.MockedFunction<
           typeof prismaClient.user.findUnique
@@ -392,8 +391,8 @@ describe("UserService", () => {
     });
   });
 
-  describe("deleteUser", () => {
-    it("should delete user successfully", async () => {
+  describe("ユーザー削除", () => {
+    it("ユーザーを正常に削除するべき", async () => {
       (
         mockPrismaClient.user.findUnique as jest.MockedFunction<
           typeof prismaClient.user.findUnique
@@ -424,7 +423,7 @@ describe("UserService", () => {
       expect(result).toEqual(mockUserWithoutPassword);
     });
 
-    it("should throw AppError when user not found", async () => {
+    it("ユーザーが見つからない場合はAppErrorをスローするべき", async () => {
       (
         mockPrismaClient.user.findUnique as jest.MockedFunction<
           typeof prismaClient.user.findUnique
@@ -438,8 +437,8 @@ describe("UserService", () => {
     });
   });
 
-  describe("validatePassword", () => {
-    it("should return user when password is valid", async () => {
+  describe("パスワード検証", () => {
+    it("パスワードが有効な場合はユーザーを返すべき", async () => {
       (mockPrismaClient.user.findUnique as jest.Mock).mockResolvedValue(
         mockUser as never
       );
@@ -460,7 +459,7 @@ describe("UserService", () => {
       expect(result).toEqual(mockUserWithoutPassword);
     });
 
-    it("should return null when user not found", async () => {
+    it("ユーザーが見つからない場合はnullを返すべき", async () => {
       (mockPrismaClient.user.findUnique as jest.Mock).mockResolvedValue(
         null as never
       );
@@ -474,7 +473,7 @@ describe("UserService", () => {
       expect(mockComparePassword).not.toHaveBeenCalled();
     });
 
-    it("should return null when password is invalid", async () => {
+    it("パスワードが無効な場合はnullを返すべき", async () => {
       (
         mockPrismaClient.user.findUnique as jest.MockedFunction<
           typeof prismaClient.user.findUnique
@@ -496,7 +495,7 @@ describe("UserService", () => {
       expect(result).toBeNull();
     });
 
-    it("should handle database errors", async () => {
+    it("データベースエラーを処理するべき", async () => {
       (mockPrismaClient.user.findUnique as jest.Mock).mockRejectedValue(
         new Error("Database error") as never
       );
