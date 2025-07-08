@@ -1,12 +1,5 @@
 import express from "express";
-import { RequestHandler } from "express";
-import {
-  login,
-  refreshToken,
-  logout,
-  me,
-  verifyToken,
-} from "../controller/auth/auth";
+import { AuthController } from "../controller/auth/auth";
 import {
   authRateLimit,
   strictRateLimit,
@@ -22,19 +15,24 @@ import { authenticate } from "../middleware/auth";
 
 const router = express.Router();
 
+const authController = new AuthController();
+
 // Public auth endpoints with strict rate limiting
-router.post("/login", authRateLimit, vLogin, login);
-router.post("/refresh", strictRateLimit, vRefreshToken, refreshToken);
+router.post("/login", authRateLimit, vLogin, (req, res, next) =>
+  authController.login(req, res, next)
+);
+router.post("/refresh", strictRateLimit, vRefreshToken, (req, res, next) =>
+  authController.refreshToken(req, res, next)
+);
 
 // Token verification endpoint (handles automatic refresh)
-router.post("/verify", authRateLimit, vVerifyToken, verifyToken);
+router.post("/verify", authRateLimit, vVerifyToken, (req, res, next) =>
+  authController.verifyToken(req, res, next)
+);
 
 // Protected auth endpoints with authentication middleware
-router.post(
-  "/logout",
-  vRequestHeader,
-  authenticate,
-  logout as unknown as RequestHandler,
+router.post("/logout", vRequestHeader, authenticate, (req, res, next) =>
+  authController.logout(req as any, res, next)
 );
 
 router.get(
@@ -42,7 +40,7 @@ router.get(
   vRequestHeader,
   authenticate,
   generalRateLimit,
-  me as unknown as RequestHandler,
+  (req, res, next) => authController.me(req as any, res, next)
 );
 
 export default router;
