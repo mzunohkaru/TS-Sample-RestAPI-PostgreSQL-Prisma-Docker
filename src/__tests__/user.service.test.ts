@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { Prisma } from "@prisma/client";
 
+// モジュールをモックに置き換え
 jest.mock("../utils/db", () => ({
   prismaClient: {
     user: {
@@ -38,6 +39,7 @@ import { AppError } from "../utils/error";
 import { prismaClient } from "../utils/db";
 import { hashPassword, comparePassword } from "../utils/hash";
 
+// モック化された関数に適切な型情報を付与する
 const mockPrismaClient = prismaClient as jest.Mocked<typeof prismaClient>;
 const mockHashPassword = hashPassword as jest.MockedFunction<
   typeof hashPassword

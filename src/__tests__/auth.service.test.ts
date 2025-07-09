@@ -33,9 +33,9 @@ jest.mock("jsonwebtoken", () => ({
   sign: jest.fn(),
   verify: jest.fn(),
   JsonWebTokenError: jest.requireActual("jsonwebtoken")
-    .JsonWebTokenError as never,
+    .JsonWebTokenError as any,
   TokenExpiredError: jest.requireActual("jsonwebtoken")
-    .TokenExpiredError as never,
+    .TokenExpiredError as any,
 }));
 
 import {
